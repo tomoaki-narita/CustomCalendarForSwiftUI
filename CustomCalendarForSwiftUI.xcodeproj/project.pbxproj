@@ -7,18 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E71207322D216965004A5291 /* EventDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71207312D216965004A5291 /* EventDate.swift */; };
 		E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */; };
 		E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C72D1E41EA00027E22 /* ContentView.swift */; };
 		E78380CA2D1E41EF00027E22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E78380C92D1E41EF00027E22 /* Assets.xcassets */; };
 		E78380CD2D1E41EF00027E22 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E78380CC2D1E41EF00027E22 /* Preview Assets.xcassets */; };
+		E78380D72D1E42B200027E22 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E78380D62D1E42B200027E22 /* RealmSwift */; };
+		E78380DA2D1E450A00027E22 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = E78380D62D1E42B200027E22 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DB2D1E470200027E22 /* CalendarView.swift */; };
+		E78380DE2D1E474F00027E22 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DD2D1E474F00027E22 /* EditView.swift */; };
+		E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		E78380D92D1E450800027E22 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E78380DA2D1E450A00027E22 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		E71207312D216965004A5291 /* EventDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDate.swift; sourceTree = "<group>"; };
+		E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CustomCalendarForSwiftUI.entitlements; sourceTree = "<group>"; };
 		E78380C22D1E41EA00027E22 /* CustomCalendarForSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomCalendarForSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarForSwiftUIApp.swift; sourceTree = "<group>"; };
 		E78380C72D1E41EA00027E22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E78380C92D1E41EF00027E22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E78380CC2D1E41EF00027E22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		E78380DB2D1E470200027E22 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		E78380DD2D1E474F00027E22 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPickerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E78380D72D1E42B200027E22 /* RealmSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +77,13 @@
 		E78380C42D1E41EA00027E22 /* CustomCalendarForSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */,
 				E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */,
 				E78380C72D1E41EA00027E22 /* ContentView.swift */,
+				E78380DB2D1E470200027E22 /* CalendarView.swift */,
+				E78380DD2D1E474F00027E22 /* EditView.swift */,
+				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
+				E71207312D216965004A5291 /* EventDate.swift */,
 				E78380C92D1E41EF00027E22 /* Assets.xcassets */,
 				E78380CB2D1E41EF00027E22 /* Preview Content */,
 			);
@@ -77,12 +108,16 @@
 				E78380BE2D1E41EA00027E22 /* Sources */,
 				E78380BF2D1E41EA00027E22 /* Frameworks */,
 				E78380C02D1E41EA00027E22 /* Resources */,
+				E78380D92D1E450800027E22 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = CustomCalendarForSwiftUI;
+			packageProductDependencies = (
+				E78380D62D1E42B200027E22 /* RealmSwift */,
+			);
 			productName = CustomCalendarForSwiftUI;
 			productReference = E78380C22D1E41EA00027E22 /* CustomCalendarForSwiftUI.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +146,9 @@
 				Base,
 			);
 			mainGroup = E78380B92D1E41EA00027E22;
+			packageReferences = (
+				E78380D32D1E42B200027E22 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			productRefGroup = E78380C32D1E41EA00027E22 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,7 +176,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */,
+				E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */,
+				E71207322D216965004A5291 /* EventDate.swift in Sources */,
 				E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */,
+				E78380DE2D1E474F00027E22 /* EditView.swift in Sources */,
+				E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +311,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CustomCalendarForSwiftUI/CustomCalendarForSwiftUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CustomCalendarForSwiftUI/Preview Content\"";
@@ -278,8 +321,10 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -287,6 +332,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.unwraps.output.CustomCalendarForSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -298,6 +345,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CustomCalendarForSwiftUI/CustomCalendarForSwiftUI.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CustomCalendarForSwiftUI/Preview Content\"";
@@ -307,8 +355,10 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -316,6 +366,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.unwraps.output.CustomCalendarForSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -344,6 +396,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E78380D32D1E42B200027E22 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.53.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E78380D62D1E42B200027E22 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E78380D32D1E42B200027E22 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E78380BA2D1E41EA00027E22 /* Project object */;
 }
