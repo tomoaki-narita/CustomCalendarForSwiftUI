@@ -15,6 +15,10 @@ struct CalendarView: View {
     @Binding var selectedMonth: Int // Bindingで月を受け取る
     private let calendar = Calendar.current
     private let monthRange = 120 // 月のスクロール範囲
+    @State private var isLeftButton: Bool = false
+    @State private var isRightButton: Bool = false
+    var events: [CalendarEvent] // イベントリストを受け取る
+    var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
     
     var body: some View {
         GeometryReader { geometry in
@@ -81,7 +85,9 @@ struct CalendarView: View {
                                     CalendarMonthView(
                                         offset: offset,
                                         selectedDates: $selectedDates,
-                                        cellHeight: (tabGeometry.size.height / 6)
+                                        cellHeight: (tabGeometry.size.height / 6),
+                                        events: events,
+                                        onLongTap: onLongTap
                                     )
                                     .tag(offset)
                                 }
@@ -97,10 +103,14 @@ struct CalendarView: View {
     
     private var headerView: some View {
         HStack {
-            Button(action: { changeMonth(by: -1) }) {
+            Button(action: {
+                changeMonth(by: -1)
+                isLeftButton.toggle()
+            }){
                 Image(systemName: "chevron.left")
                     .foregroundStyle(isWithinBounds(currentMonth - 1) && !isPickerVisible ? Color.primary : .gray)
             }
+            .symbolEffect(.bounce.down.wholeSymbol, value: isLeftButton)
             .disabled(!isWithinBounds(currentMonth - 1) || isPickerVisible) // 範囲外またはピッカーが表示中の場合ボタン無効化
             Spacer()
             
@@ -113,10 +123,14 @@ struct CalendarView: View {
             
             Spacer()
             
-            Button(action: { changeMonth(by: 1) }) {
+            Button(action: {
+                changeMonth(by: 1)
+                isRightButton.toggle()
+            }){
                 Image(systemName: "chevron.right")
                     .foregroundStyle(isWithinBounds(currentMonth + 1) && !isPickerVisible ? Color.primary : .gray)
             }
+            .symbolEffect(.bounce.down.wholeSymbol, value: isRightButton)
             .disabled(!isWithinBounds(currentMonth + 1) || isPickerVisible) // 範囲外またはピッカーが表示中の場合ボタン無効化
         }
     }
@@ -124,7 +138,7 @@ struct CalendarView: View {
     private func changeMonth(by offset: Int) {
         let newMonth = currentMonth + offset
         if isWithinBounds(newMonth) {
-            withAnimation {
+            withAnimation(.snappy) {
                 currentMonth = newMonth
             }
         }
@@ -168,28 +182,33 @@ struct CalendarView: View {
     }
 }
 
-
-
-
-
-
 struct CalendarMonthView: View {
     let offset: Int
     @Binding var selectedDates: [Date]
     let cellHeight: CGFloat
     private let calendar = Calendar.current
     
+    var events: [CalendarEvent] // イベントリストを受け取る
+    
+    var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    
     var body: some View {
         let days = getDaysForMonth()
         
         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 0) {
             ForEach(days.indices, id: \.self) { index in
-                DayView(date: days[index], selectedDates: $selectedDates, cellHeight: cellHeight)
-                    .onTapGesture {
-                        if let date = days[index] {
-                            toggleDateSelection(date)
-                        }
+                DayView(
+                    date: days[index],
+                    selectedDates: $selectedDates,
+                    cellHeight: cellHeight,
+                    events: events,
+                    onLongTap: onLongTap
+                )
+                .onTapGesture {
+                    if let date = days[index] {
+                        toggleDateSelection(date)
                     }
+                }
             }
         }
     }
@@ -227,6 +246,10 @@ struct DayView: View {
     let cellHeight: CGFloat
     private let calendar = Calendar.current
     
+    let events: [CalendarEvent] // イベントデータを追加
+    
+    var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    
     var body: some View {
         VStack(spacing: 0) {
             if let date = date {
@@ -246,13 +269,52 @@ struct DayView: View {
                     }
                 }
                 
-                Text("Event")
-                    .font(.caption2)
-                    .foregroundStyle(Color.gray)
-                    .multilineTextAlignment(.center)
+                // イベントタイトルを取得して表示
+                if let eventTitle = getEventTitle(for: date) {
+                    Text(eventTitle.prefix(8))
+                        .font(.caption2)
+                        .foregroundStyle(getEventColor(for: date))
+                        .multilineTextAlignment(.center)
+                        .frame(minHeight: 20)
+                        .frame(maxHeight: 40)
+                } else {
+                    Text("")
+                        .font(.caption2)
+                        .foregroundStyle(getEventColor(for: date))
+                        .multilineTextAlignment(.center)
+                        .frame(minHeight: 20)
+                        .frame(maxHeight: 40)
+                }
             }
         }
         .frame(height: cellHeight)
+        .onLongPressGesture {
+            if let date = date {
+                onLongTap(date) // ロングタップされた日付を渡す
+            }
+        }
+    }
+    
+    private func getEventColor(for date: Date) -> Color {
+        if let matchedEvent = events.first(where: { calendar.isDate($0.eventStartDate, inSameDayAs: date) }) {
+            return decodeDataToColor(matchedEvent.colorData) // 色をデコードして返す
+        }
+        return Color.primary // デフォルトの色
+    }
+    
+    func decodeDataToColor(_ data: Data?) -> Color {
+        guard let data = data,
+              let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) else {
+            return .gray
+        }
+        return Color(uiColor)
+    }
+    
+    private func getEventTitle(for date: Date) -> String? {
+        let matchedEvent = events.first { event in
+            calendar.isDate(event.eventStartDate, inSameDayAs: date)
+        }
+        return matchedEvent?.eventTitle
     }
     
     private func isSelected(_ date: Date) -> Bool {
@@ -264,30 +326,6 @@ struct DayView: View {
     }
 }
 
-struct StatefulPreviewWrapper<Content: View>: View {
-    @State var currentMonth: Int
-    @State var selectedDates: [Date]
-    @State var isPickerVisible: Bool
-    @State var selectedYear: Int
-    @State var selectedMonth: Int
-    
-    let content: (Binding<Int>, Binding<[Date]>, Binding<Bool>, Binding<Int>, Binding<Int>) -> Content
-    
-    var body: some View {
-        content($currentMonth, $selectedDates, $isPickerVisible, $selectedYear, $selectedMonth)
-    }
-}
-
 #Preview {
-    VStack {
-        // プレビュー用の親ビューで状態を管理
-        StatefulPreviewWrapper(currentMonth: 0, selectedDates: [], isPickerVisible: false, selectedYear: Calendar.current.component(.year, from: Date()), selectedMonth: Calendar.current.component(.month, from: Date())) { currentMonth, selectedDates, isPickerVisible, selectedYear, selectedMonth in
-            CalendarView(currentMonth: currentMonth, selectedDates: selectedDates, isPickerVisible: isPickerVisible, selectedYear: selectedYear, selectedMonth: selectedMonth)
-        }
-        
-        // もう一つの状態のプレビュー
-        StatefulPreviewWrapper(currentMonth: 0, selectedDates: [Date()], isPickerVisible: false, selectedYear: Calendar.current.component(.year, from: Date()), selectedMonth: Calendar.current.component(.month, from: Date())) { currentMonth, selectedDates, isPickerVisible, selectedYear, selectedMonth in
-            CalendarView(currentMonth: currentMonth, selectedDates: selectedDates, isPickerVisible: isPickerVisible, selectedYear: selectedYear, selectedMonth: selectedMonth)
-        }
-    }
+    ContentView()
 }

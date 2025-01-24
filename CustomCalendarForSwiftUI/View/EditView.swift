@@ -17,13 +17,9 @@ struct EditView: View {
     let clockImage: Image = Image(systemName: "clock").symbolRenderingMode(.multicolor)
     let memoImage: Image = Image(systemName: "note.text").symbolRenderingMode(.multicolor)
     
-
-    
-    
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.purple.ignoresSafeArea()
                 List {
                     Section {
                         Button {
@@ -52,8 +48,7 @@ struct EditView: View {
                                     .frame(width: 10)
                                     .foregroundStyle(decodeDataToColor(event.colorData))
                                 Text(event.eventTitle)
-//                                    .foregroundStyle(decodeDataToColor(event.colorData))
-                  
+                                    .fixedSize(horizontal: false, vertical: true)
                                 if let memo = event.eventMemo, !memo.isEmpty {
                                     memoImage.font(.footnote).opacity(0.25)
                                 }
@@ -76,9 +71,8 @@ struct EditView: View {
                                 } label: {
                                     Image(systemName: "square.and.pencil")
                                 }
-                                
+                                .tint(.blue)
                             }
-                            
                             
                         }
                         .onDelete(perform: { index in
@@ -86,17 +80,10 @@ struct EditView: View {
                         })
                         .onMove(perform: moveEvent)
                     }
-                    .frame(height:40)
-//                    .listRowBackground(
-//                        RoundedRectangle(cornerRadius: 15)
-//                            .fill(Color.white.opacity(0.5))
-//                            .padding(.vertical, 3)
-//                    )
+                    .frame(minHeight:40)
                     
                 }
-                
-//                .scrollContentBackground(.hidden)
-
+                //                .scrollContentBackground(.hidden)
                 .toolbar {
                     EditButton()
                 }
@@ -122,17 +109,6 @@ struct EditView: View {
             print("Error updating event order in Realm: \(error.localizedDescription)")
         }
     }
-
-    
-//    func fetchEvents() {
-//        do {
-//            let realm = try Realm()
-//            let savedEvents = realm.objects(EventDate.self).sorted(byKeyPath: "sortOrder", ascending: true)
-//            events = Array(savedEvents)
-//        } catch {
-//            print("Error fetching events from Realm: \(error.localizedDescription)")
-//        }
-//    }
     
     func decodeDataToColor(_ data: Data?) -> Color {
         guard let data = data, let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) else {
@@ -152,9 +128,8 @@ struct EditView: View {
 }
 
 struct CreateNewEventView: View {
-//    @Binding var events: [EventDate]
+    
     @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
-
     @Binding var editingEvent: EventDate?
     @State var eventTitle: String = ""
     @State var eventMemo: String = ""
@@ -193,7 +168,6 @@ struct CreateNewEventView: View {
             }
         }
     }
-    
     
     var body: some View {
         NavigationStack {
@@ -275,7 +249,7 @@ struct CreateNewEventView: View {
                         }
                         .frame(minHeight: 40)
                     }
-
+                    
                     
                     Section {
                         HStack {
@@ -286,11 +260,11 @@ struct CreateNewEventView: View {
                             Spacer()
                         }
                     }
-//                    .listRowBackground(
-//                        RoundedRectangle(cornerRadius: 20)
-//                            .fill(Color.clear)
-//                            .padding(.vertical, 5)
-//                    )
+                    //                    .listRowBackground(
+                    //                        RoundedRectangle(cornerRadius: 20)
+                    //                            .fill(Color.clear)
+                    //                            .padding(.vertical, 5)
+                    //                    )
                 }
                 .navigationTitle(editingEvent == nil ? "Create Event" : "Edit Event")
                 .toolbar {
@@ -361,7 +335,7 @@ struct CreateNewEventView: View {
                     sortOrder: events.count, // 追加されるイベントの順番を設定
                     colorData: colorData
                 )
-
+                
                 do {
                     let realm = try Realm()
                     try realm.write {
@@ -371,12 +345,10 @@ struct CreateNewEventView: View {
                     print("Error saving new event: \(error.localizedDescription)")
                 }
             }
-
+            
             dismiss()
         }
     }
-
-
     
     func encodeColorToData(_ color: Color) -> Data? {
         let uiColor = UIColor(color)
@@ -392,13 +364,13 @@ struct CreateNewEventView: View {
     
     func stringToDate(_ dateString: String) -> Date? {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss"
+        formatter.dateFormat = "HH:mm"
         return formatter.date(from: dateString)
     }
     
     func dateToString(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss"
+        formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
     }
     
@@ -413,7 +385,6 @@ struct CreateNewEventView: View {
         }
     }
 }
-
 
 #Preview {
     EditView()

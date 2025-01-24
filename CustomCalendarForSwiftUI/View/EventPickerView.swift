@@ -11,10 +11,12 @@ import RealmSwift
 struct EventPickerView: View {
     @State private var pickerType: TripPicker = .scaled
     @State private var activeID: EventDate.ID?
-    @State private var isExpanded: Bool = false
+    @Binding var selectedEvent: EventDate?
+    @State private var isHideButton: Bool = false
     var buttonSize: CGFloat = 50
     var events: [EventDate]
     var closeAction: () -> Void
+    var onEventSelected: (EventDate) -> Void
     
     enum TripPicker: String, CaseIterable {
         case scaled = "Scaled"
@@ -32,8 +34,10 @@ struct EventPickerView: View {
                         HStack(spacing: 35) {
                             ForEach(events) { event in
                                 Button {
-                                    isExpanded = false
-                                    print("Event selected: \(event.eventTitle) \(event.eventStartDate) - \(event.eventEndDate)")
+                                    selectedEvent = event
+                                    onEventSelected(event)
+                                    //                                    print("Event selected: \(event.eventTitle) \(event.eventStartDate) - \(event.eventEndDate)")
+                                    closeAction()
                                 } label: {
                                     let currentActiveID = activeID
                                     let currentPickerType = pickerType
@@ -46,7 +50,7 @@ struct EventPickerView: View {
                                         .overlay(
                                             Circle()
                                                 .stroke(decodeDataToColor(event.colorData), lineWidth: 3)
-                                                
+                                            
                                         )
                                         .shadow(color: .black.opacity(0.15), radius: 5, x: 5, y: 5)
                                         .visualEffect { view, proxy in
@@ -66,15 +70,17 @@ struct EventPickerView: View {
                         .scrollTargetLayout()
                     }
                     Button(action: {
+                        isHideButton.toggle()
                         closeAction() // 閉じるアクションを実行
                     }) {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark")
                             .foregroundStyle(Color.primary)
-                            .font(.title2)
+                            .font(.footnote).fontWeight(.bold)
                             .shadow(radius: 10)
+                            .frame(width: 30, height: 30)
                             .padding(.bottom, 150) // 下部に配置
                     }
-                    
+                    .symbolEffect(.bounce.down.wholeSymbol, value: isHideButton)
                 }
                 .safeAreaPadding(.horizontal, padding)
                 .scrollIndicators(.hidden)
@@ -84,7 +90,7 @@ struct EventPickerView: View {
                 //                .background(Color.red)
             }
             .frame(height: 200)
-//            .background(Color.red)
+            //            .background(Color.red)
         }
         .ignoresSafeArea(.container, edges: .bottom)
     }
@@ -112,22 +118,10 @@ struct EventPickerView: View {
         }
         return Color(uiColor)
     }
+    
 }
-
-//fileprivate struct NoAnimationButtonStyle: ButtonStyle {
-//    func makeBody(configuration: Configuration) -> some View {
-//        configuration.label
-//    }
-//}
-//
-//fileprivate struct PressableButtonStyle: ButtonStyle {
-//    func makeBody(configuration: Configuration) -> some View {
-//        configuration.label
-//            .scaleEffect(configuration.isPressed ? 0.9 : 1)
-//            .animation(.snappy(duration: 0.3, extraBounce: 0), value: configuration.isPressed)
-//    }
-//}
 
 #Preview {
     ContentView()
 }
+

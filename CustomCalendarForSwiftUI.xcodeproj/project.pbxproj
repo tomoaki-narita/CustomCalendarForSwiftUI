@@ -17,6 +17,7 @@
 		E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DB2D1E470200027E22 /* CalendarView.swift */; };
 		E78380DE2D1E474F00027E22 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DD2D1E474F00027E22 /* EditView.swift */; };
 		E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */; };
+		E7CCD58B2D43B261009E98BD /* EventDetailModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +45,7 @@
 		E78380DB2D1E470200027E22 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		E78380DD2D1E474F00027E22 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPickerView.swift; sourceTree = "<group>"; };
+		E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailModal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,13 +79,11 @@
 		E78380C42D1E41EA00027E22 /* CustomCalendarForSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				E7CCD58D2D43B2A3009E98BD /* Model */,
+				E7CCD58C2D43B29C009E98BD /* View */,
+				E78380C72D1E41EA00027E22 /* ContentView.swift */,
 				E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */,
 				E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */,
-				E78380C72D1E41EA00027E22 /* ContentView.swift */,
-				E78380DB2D1E470200027E22 /* CalendarView.swift */,
-				E78380DD2D1E474F00027E22 /* EditView.swift */,
-				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
-				E71207312D216965004A5291 /* EventDate.swift */,
 				E78380C92D1E41EF00027E22 /* Assets.xcassets */,
 				E78380CB2D1E41EF00027E22 /* Preview Content */,
 			);
@@ -96,6 +96,25 @@
 				E78380CC2D1E41EF00027E22 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		E7CCD58C2D43B29C009E98BD /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E78380DB2D1E470200027E22 /* CalendarView.swift */,
+				E78380DD2D1E474F00027E22 /* EditView.swift */,
+				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
+				E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E7CCD58D2D43B2A3009E98BD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E71207312D216965004A5291 /* EventDate.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,6 +200,7 @@
 				E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */,
 				E78380DE2D1E474F00027E22 /* EditView.swift in Sources */,
 				E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */,
+				E7CCD58B2D43B261009E98BD /* EventDetailModal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
