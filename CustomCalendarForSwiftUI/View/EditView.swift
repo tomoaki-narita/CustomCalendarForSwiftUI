@@ -11,6 +11,7 @@ import RealmSwift
 struct EditView: View {
     @State var isEditViewVisible: Bool = false
     @State var editingEvent: EventDate? = nil
+    @State var eventListIsExpanded: Bool = true
     @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
     let plusImage: Image = Image(systemName: "plus")
     let starImage: Image = Image(systemName: "star.fill").symbolRenderingMode(.multicolor)
@@ -29,7 +30,9 @@ struct EditView: View {
                             HStack {
                                 Spacer()
                                 Text("Create new event")
+                                    .tint(.primary)
                                 plusImage.font(.footnote)
+                                    .tint(.primary)
                                 Spacer()
                             }
                         }
@@ -41,7 +44,7 @@ struct EditView: View {
                         }
                     }
                     
-                    Section {
+                    Section(isExpanded: $eventListIsExpanded, content: {
                         ForEach(events, id: \.id) { event in
                             HStack {
                                 Circle()
@@ -79,14 +82,28 @@ struct EditView: View {
                             $events.remove(atOffsets: index)
                         })
                         .onMove(perform: moveEvent)
-                    }
+                    }, header: {
+                        HStack {
+                            Text("Event list")
+                                .fontWeight(.semibold)
+                                .font(.title2)
+                        }
+                    })
                     .frame(minHeight:40)
+                    .tint(.primary)
                     
+                    Section {
+                        NavigationLink("Backup", destination: BackupView())
+                    }
                 }
                 //                .scrollContentBackground(.hidden)
                 .toolbar {
                     EditButton()
                 }
+                .navigationTitle("Event")
+                .navigationBarTitleDisplayMode(.large)
+                .listStyle(.sidebar)
+                .headerProminence(.increased)
             }
         }
     }
@@ -251,12 +268,14 @@ struct CreateNewEventView: View {
                     }
                     
                     
+                    
                     Section {
                         HStack {
                             Spacer()
                             Button(editingEvent == nil ? "Add" : "Save") {
                                 handleSaveButtonTapped()
                             }
+                            .tint(.primary)
                             Spacer()
                         }
                     }
@@ -266,6 +285,7 @@ struct CreateNewEventView: View {
                     //                            .padding(.vertical, 5)
                     //                    )
                 }
+                .listStyle(.sidebar)
                 .navigationTitle(editingEvent == nil ? "Create Event" : "Edit Event")
                 .toolbar {
                     Button {

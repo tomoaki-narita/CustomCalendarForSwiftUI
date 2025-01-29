@@ -24,7 +24,7 @@ struct ContentView: View {
     private let calendar = Calendar.current
     @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
     @StateObject private var eventViewModel = EventViewModel()
-    
+    @StateObject private var viewModel = HolidayViewModel()
     @State private var tappedDate: Date? = nil  // ロングタップされた日付
     
     private enum AlertType: Identifiable {
@@ -55,7 +55,7 @@ struct ContentView: View {
                         events: eventViewModel.events,
                         onLongTap: { date in
                             tappedDate = date  // ロングタップされた日付を保存
-                        }
+                        }, viewModel: viewModel
                     )
                     //                    .background(Color(.secondarySystemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 25))
@@ -98,6 +98,7 @@ struct ContentView: View {
                                 .shadow(radius: 10)
                         }
                         .symbolEffect(.bounce.down.wholeSymbol, value: isPlusButton)
+                        .disabled(isPickerVisible)
                         
                         Spacer()
                         NavigationLink(destination: EditView()) {
@@ -115,12 +116,11 @@ struct ContentView: View {
                         Button("print") {
                             fetchAndPrintSavedEvents()
                         }
-                        // 全削除ボタン
-                        Button(action: deleteAllEvents) {
-                            Text("delete")
-                            
-                        }
                         
+                        Button("delete") {
+                            print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
+
+                        }
                         
                         
                     }
@@ -133,8 +133,12 @@ struct ContentView: View {
                 }
                 .padding()
                 .sheet(item: $tappedDate) { date in
-                    EventDetailModal(date: date, events: eventViewModel.events)
+                    EventDetailModal(date: date, eventViewModel: eventViewModel, viewModel: viewModel)
                         .presentationDetents([.medium, .large])
+                }
+                .onAppear {
+                    print("onApper")
+                    eventViewModel.fetchEvents()
                 }
             }
         }
@@ -289,10 +293,7 @@ struct ContentView: View {
             print("データの取得に失敗しました: \(error.localizedDescription)")
         }
     }
-    private func deleteAllEvents() {
-        eventViewModel.deleteAllEvents()
-        resetCalendar()
-    }
+    
 }
 
 extension Date: @retroactive Identifiable {

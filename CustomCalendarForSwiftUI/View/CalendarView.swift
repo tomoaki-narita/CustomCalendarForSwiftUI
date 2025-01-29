@@ -19,8 +19,9 @@ struct CalendarView: View {
     @State private var isRightButton: Bool = false
     var events: [CalendarEvent] // イベントリストを受け取る
     var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    @ObservedObject var viewModel: HolidayViewModel
     
-    var body: some View {
+        var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 headerView
@@ -87,7 +88,8 @@ struct CalendarView: View {
                                         selectedDates: $selectedDates,
                                         cellHeight: (tabGeometry.size.height / 6),
                                         events: events,
-                                        onLongTap: onLongTap
+                                        onLongTap: onLongTap,
+                                        viewModel: viewModel
                                     )
                                     .tag(offset)
                                 }
@@ -187,10 +189,9 @@ struct CalendarMonthView: View {
     @Binding var selectedDates: [Date]
     let cellHeight: CGFloat
     private let calendar = Calendar.current
-    
     var events: [CalendarEvent] // イベントリストを受け取る
-    
     var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    @ObservedObject var viewModel: HolidayViewModel
     
     var body: some View {
         let days = getDaysForMonth()
@@ -202,7 +203,7 @@ struct CalendarMonthView: View {
                     selectedDates: $selectedDates,
                     cellHeight: cellHeight,
                     events: events,
-                    onLongTap: onLongTap
+                    onLongTap: onLongTap, viewModel: viewModel
                 )
                 .onTapGesture {
                     if let date = days[index] {
@@ -245,10 +246,9 @@ struct DayView: View {
     @Binding var selectedDates: [Date]
     let cellHeight: CGFloat
     private let calendar = Calendar.current
-    
     let events: [CalendarEvent] // イベントデータを追加
-    
     var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    @ObservedObject var viewModel: HolidayViewModel
     
     var body: some View {
         VStack(spacing: 0) {
@@ -258,12 +258,13 @@ struct DayView: View {
                         // 日付テキスト
                         Text("\(calendar.component(.day, from: date))")
                             .font(.title3)
-                            .foregroundStyle(isSelected(date) ? Color.white : (isToday(date) ? .accentColor : .primary))  // 現在の日付のテキスト色をaccentColorに変更
+                            .foregroundStyle(getDateColor(for: date))
+//                            .foregroundStyle(isSelected(date) ? Color.white : (isToday(date) ? .accentColor : .primary))  // 現在の日付のテキスト色をaccentColorに変更
                             .frame(width: geometry.size.width, height: geometry.size.height) // Textを中央に配置
                             .multilineTextAlignment(.center)
                             .background(
                                 Circle()
-                                    .fill(isSelected(date) ? Color.blue.opacity(0.9) : Color.clear)  // 現在の日付の背景はなし
+                                    .fill(isSelected(date) ? Color.blue.opacity(0.5) : Color.clear)  // 現在の日付の背景はなし
                                     .frame(maxWidth: geometry.size.width * 0.7)
                             )
                     }
@@ -272,14 +273,14 @@ struct DayView: View {
                 // イベントタイトルを取得して表示
                 if let eventTitle = getEventTitle(for: date) {
                     Text(eventTitle.prefix(8))
-                        .font(.caption2)
+                        .font(.footnote)
                         .foregroundStyle(getEventColor(for: date))
                         .multilineTextAlignment(.center)
                         .frame(minHeight: 20)
                         .frame(maxHeight: 40)
                 } else {
                     Text("")
-                        .font(.caption2)
+                        .font(.footnote)
                         .foregroundStyle(getEventColor(for: date))
                         .multilineTextAlignment(.center)
                         .frame(minHeight: 20)
@@ -292,6 +293,26 @@ struct DayView: View {
             if let date = date {
                 onLongTap(date) // ロングタップされた日付を渡す
             }
+        }
+    }
+    
+    private func getDateColor(for date: Date) -> Color {
+        if isHoliday(date) { // 祝日なら赤色
+            return .holiday
+        } else if isToday(date) { // 今日ならアクセントカラー
+            return .accentColor
+        } else if isSelected(date) { // 選択中なら白色
+            return .primary
+        } else {
+            return .primary // デフォルト色
+        }
+    }
+    
+    // 該当の日付が祝日かどうかを判定
+    private func isHoliday(_ date: Date) -> Bool {
+        viewModel.holidays.contains { holiday in
+            guard let holidayDate = holiday.dateFormatted else { return false }
+            return calendar.isDate(holidayDate, inSameDayAs: date)
         }
     }
     

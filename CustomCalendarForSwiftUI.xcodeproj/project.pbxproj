@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E71207322D216965004A5291 /* EventDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71207312D216965004A5291 /* EventDate.swift */; };
+		E745185E2D48E3BF009AC781 /* BackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E745185D2D48E3BF009AC781 /* BackupView.swift */; };
 		E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */; };
 		E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C72D1E41EA00027E22 /* ContentView.swift */; };
 		E78380CA2D1E41EF00027E22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E78380C92D1E41EF00027E22 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 		E78380DA2D1E450A00027E22 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = E78380D62D1E42B200027E22 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DB2D1E470200027E22 /* CalendarView.swift */; };
 		E78380DE2D1E474F00027E22 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DD2D1E474F00027E22 /* EditView.swift */; };
+		E78ECB332D47795000982171 /* Holiday.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ECB322D47793D00982171 /* Holiday.swift */; };
 		E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */; };
 		E7CCD58B2D43B261009E98BD /* EventDetailModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */; };
 /* End PBXBuildFile section */
@@ -37,6 +39,7 @@
 /* Begin PBXFileReference section */
 		E71207312D216965004A5291 /* EventDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDate.swift; sourceTree = "<group>"; };
 		E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CustomCalendarForSwiftUI.entitlements; sourceTree = "<group>"; };
+		E745185D2D48E3BF009AC781 /* BackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupView.swift; sourceTree = "<group>"; };
 		E78380C22D1E41EA00027E22 /* CustomCalendarForSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomCalendarForSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarForSwiftUIApp.swift; sourceTree = "<group>"; };
 		E78380C72D1E41EA00027E22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -44,6 +47,7 @@
 		E78380CC2D1E41EF00027E22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E78380DB2D1E470200027E22 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		E78380DD2D1E474F00027E22 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		E78ECB322D47793D00982171 /* Holiday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holiday.swift; sourceTree = "<group>"; };
 		E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPickerView.swift; sourceTree = "<group>"; };
 		E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailModal.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,6 +109,7 @@
 				E78380DD2D1E474F00027E22 /* EditView.swift */,
 				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
 				E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */,
+				E745185D2D48E3BF009AC781 /* BackupView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				E71207312D216965004A5291 /* EventDate.swift */,
+				E78ECB322D47793D00982171 /* Holiday.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -196,10 +202,12 @@
 			files = (
 				E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */,
 				E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */,
+				E78ECB332D47795000982171 /* Holiday.swift in Sources */,
 				E71207322D216965004A5291 /* EventDate.swift in Sources */,
 				E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */,
 				E78380DE2D1E474F00027E22 /* EditView.swift in Sources */,
 				E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */,
+				E745185E2D48E3BF009AC781 /* BackupView.swift in Sources */,
 				E7CCD58B2D43B261009E98BD /* EventDetailModal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -49,7 +49,7 @@ struct EventPickerView: View {
                                         .background(decodeDataToColor(event.colorData).opacity(0.98).gradient, in: .circle)
                                         .overlay(
                                             Circle()
-                                                .stroke(decodeDataToColor(event.colorData), lineWidth: 3)
+                                                .stroke(decodeDataToColor(event.colorData), lineWidth: 1)
                                             
                                         )
                                         .shadow(color: .black.opacity(0.15), radius: 5, x: 5, y: 5)
