@@ -76,7 +76,6 @@ struct EditView: View {
                                 }
                                 .tint(.blue)
                             }
-                            
                         }
                         .onDelete(perform: { index in
                             $events.remove(atOffsets: index)
@@ -84,6 +83,8 @@ struct EditView: View {
                         .onMove(perform: moveEvent)
                     }, header: {
                         HStack {
+                            Image(systemName: "square.and.pencil")
+                                .font(.headline)
                             Text("Event list")
                                 .fontWeight(.semibold)
                                 .font(.title2)
@@ -93,12 +94,33 @@ struct EditView: View {
                     .tint(.primary)
                     
                     Section {
-                        NavigationLink("Backup", destination: BackupView())
+                        NavigationLink("Export or Import", destination: BackupView())
+                    } header: {
+                        HStack {
+                            Image(systemName: "arrow.up.arrow.down")
+                                .font(.headline)
+                            Text("Backup")
+                                .fontWeight(.semibold)
+                                .font(.title2)
+                        }
+                    }
+                    
+                    Section {
+                        NavigationLink("Export to iOS calendar", destination: CopyingIosCalendarEvents())
+                    } header: {
+                        HStack {
+                            Image(systemName: "arrow.up")
+                                .font(.headline)
+                            Text("iOS Calendar")
+                                .fontWeight(.semibold)
+                                .font(.title2)
+                        }
                     }
                 }
                 //                .scrollContentBackground(.hidden)
                 .toolbar {
                     EditButton()
+                        .tint(.primary)
                 }
                 .navigationTitle("Event")
                 .navigationBarTitleDisplayMode(.large)
@@ -106,8 +128,9 @@ struct EditView: View {
                 .headerProminence(.increased)
             }
         }
+        .fontDesign(.rounded)
     }
-    
+
     func moveEvent(from source: IndexSet, to destination: Int) {
         _ = source.map { events[$0] }
         var updatedEvents = Array(events)

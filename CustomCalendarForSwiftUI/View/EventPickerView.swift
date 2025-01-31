@@ -93,6 +93,7 @@ struct EventPickerView: View {
             //            .background(Color.red)
         }
         .ignoresSafeArea(.container, edges: .bottom)
+        .fontDesign(.rounded)
     }
     
     nonisolated func offset(_ proxy: GeometryProxy) -> CGFloat {

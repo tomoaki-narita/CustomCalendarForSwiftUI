@@ -44,7 +44,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                //                Color(.secondarySystemGroupedBackground).ignoresSafeArea()
+                                Color(.systemGroupedBackground).ignoresSafeArea()
                 VStack {
                     CalendarView(
                         currentMonth: $currentMonth,
@@ -61,8 +61,6 @@ struct ContentView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 25))
                     .blur(radius: showEventPickerView ? 2.5 : 0)
                     .allowsHitTesting(!showEventPickerView)
-                    
-                    
                     
                     HStack {
                         Spacer()
@@ -103,7 +101,7 @@ struct ContentView: View {
                         Spacer()
                         NavigationLink(destination: EditView()) {
                             
-                            Image(systemName: "square.and.pencil")
+                            Image(systemName: "gearshape")
                                 .foregroundStyle(Color.primary)
                                 .font(.title3).fontWeight(.bold)
                                 .padding()
@@ -113,19 +111,17 @@ struct ContentView: View {
                         Spacer()
                         
                         
-                        Button("print") {
-                            fetchAndPrintSavedEvents()
-                        }
-                        
-                        Button("delete") {
-                            print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
-
-                        }
+//                        Button("print") {
+//                            fetchAndPrintSavedEvents()
+//                        }
+//                        
+//                        Button("delete") {
+//                            print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
+//
+//                        }
                         
                         
                     }
-                    
-                    //                        .background(Color(.secondarySystemGroupedBackground).opacity(0.5))
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .allowsHitTesting(!showEventPickerView) //opacityが0になるとタップできなくなるため不要だが一応残す
                     .opacity(showEventPickerView ? 0 : 1)
@@ -137,7 +133,6 @@ struct ContentView: View {
                         .presentationDetents([.medium, .large])
                 }
                 .onAppear {
-                    print("onApper")
                     eventViewModel.fetchEvents()
                 }
             }
@@ -176,6 +171,7 @@ struct ContentView: View {
             Text("Would you like to register for the date of your choice?")
         }
         .alert(item: $activeAlert, content: createAlert)
+        .fontDesign(.rounded)
     }
     
     private func resetCalendar() {

@@ -30,6 +30,7 @@ struct EventDetailModal: View {
                         }
                     }
                     let eventsForDay = eventViewModel.events.filter { calendar.isDate($0.eventStartDate, inSameDayAs: date) }
+                        .sorted { $0.eventStartDate < $1.eventStartDate } // ここで開始時刻順にソート
                     if eventsForDay.isEmpty {
                         Section {
                             Text("None")
@@ -125,6 +126,7 @@ struct EventDetailModal: View {
                 )
             }
         }
+        .fontDesign(.rounded)
     }
     
     func dateToString(_ date: Date) -> String {

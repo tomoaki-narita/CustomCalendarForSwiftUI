@@ -15,6 +15,13 @@ struct BackupView: View {
     @State private var showImporter = false
     @State private var selectedImportURL: URL?
     @State private var activeAlert: AlertType? = nil
+    @State private var errorMessage: String? = nil
+    
+    private let exportFlowString: Array = ["Tap the Export button", "When the backup confirmation pop-up appears, tap the OK button.", "When the \"Files\" app starts, save (\"Move\") it to your desired location.", "The backup is complete when a \"Backup Successful\" pop-up appears."
+    ]
+    
+    private let importFlowString: Array = ["Tap the Import button", "When the \"Files\" app starts, select the JSON file you want to import.", "When the import confirmation pop-up appears, tap the OK button.", "The import is complete when the \"Import Successful\" pop-up appears."
+    ]
     
     private enum AlertType: Identifiable {
         case confirmBackup
@@ -45,51 +52,150 @@ struct BackupView: View {
         }
     }
     
-    var body: some View {
-        NavigationStack {
-            VStack {
-                Button {
-                    activeAlert = .confirmBackup
-                } label: {
-                    Text("Backup")
-                }
-                .fileExporter(
-                    isPresented: $showExporter,
-                    document: exportData.map { BackupFile(data: $0) } ?? BackupFile(data: Data()),
-                    contentType: .json,
-                    defaultFilename: "calendar_backup"
-                ) { result in
-                    switch result {
-                    case .success(let url):
-                        print("バックアップ保存成功: \(url)")
-                        activeAlert = .backupSuccess
-                    case .failure(let error):
-                        print("エクスポート失敗: \(error.localizedDescription)")
-                        activeAlert = .backupFailed
-                    }
-                }
-                
-                Button {
-                    showImporter = true  // ファイルアプリを開く
-                } label: {
-                    Text("Import")
-                }
-                .fileImporter(
-                    isPresented: $showImporter,
-                    allowedContentTypes: [.json]
-                ) { result in
-                    switch result {
-                    case .success(let url):
-                        selectedImportURL = url
-                        activeAlert = .confirmImport
-                    case .failure(let error):
-                        print("インポート失敗: \(error.localizedDescription)")
-                        activeAlert = .importFailed
-                    }
-                }
+    enum ImportError: Error {
+        case invalidFormat
+        case missingKeys
+        
+        var localizedDescription: String {
+            switch self {
+            case .invalidFormat:
+                return "The file is not a valid JSON backup."
+            case .missingKeys:
+                return "The backup file is missing required data keys."
             }
         }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            
+            ZStack {
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                VStack(spacing: 20) {
+                    HStack(alignment: .center) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Export flow")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                    .padding(.top)
+                    .foregroundStyle(.primary.opacity(0.8))
+                    
+                    VStack(alignment: .leading, spacing: 15) {
+                        ForEach(exportFlowString, id: \.self) { item in
+                            HStack(alignment: .top) {
+                                Text("\(exportFlowString.firstIndex(of: item)! + 1).")
+                                    .font(.body)
+                                    .fontWeight(.bold)
+                                Text(item)
+                                    .font(.body)
+                            }
+                            
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal)
+                    .foregroundStyle(.primary.opacity(0.8))
+                    
+                    HStack {
+                        Image(systemName: "square.and.arrow.down")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        Text("Import flow")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                    .padding(.top)
+                    .foregroundStyle(.primary.opacity(0.8))
+                    
+                    VStack(alignment: .leading, spacing: 15) {
+                        ForEach(importFlowString, id: \.self) { item in
+                            HStack(alignment: .top) {
+                                Text("\(importFlowString.firstIndex(of: item)! + 1).")
+                                    .font(.body)
+                                    .fontWeight(.bold)
+                                Text(item)
+                                    .font(.body)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                    .foregroundStyle(.primary.opacity(0.8))
+                    
+                    Spacer()
+                    
+                    HStack(spacing: 50) {
+                    Button {
+                        activeAlert = .confirmBackup
+                    } label: {
+                        VStack {
+                            Image(systemName: "square.and.arrow.up")
+                            Text("Export")
+                        }
+                        .tint(.primary.opacity(0.8))
+                        .fontWeight(.bold)
+                    }
+                    .fileExporter(
+                        isPresented: $showExporter,
+                        document: exportData.map { BackupFile(data: $0) } ?? BackupFile(data: Data()),
+                        contentType: .json,
+                        defaultFilename: "calendar_backup"
+                    ) { result in
+                        switch result {
+                        case .success(let url):
+                            print("バックアップ保存成功: \(url)")
+                            activeAlert = .backupSuccess
+                        case .failure(let error):
+                            print("エクスポート失敗: \(error.localizedDescription)")
+                            activeAlert = .backupFailed
+                        }
+                    }
+                    .frame(width: 100, height: 100)
+                    .background {
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(Color(.secondarySystemGroupedBackground))
+                    }
+                    
+                    
+                    Button {
+                        showImporter = true  // ファイルアプリを開く
+                    } label: {
+                        VStack {
+                            Image(systemName: "square.and.arrow.down")
+                            Text("Import")
+                        }
+                        .tint(.primary.opacity(0.8))
+                        .fontWeight(.bold)
+                    }
+                    .fileImporter(
+                        isPresented: $showImporter,
+                        allowedContentTypes: [.json]
+                    ) { result in
+                        switch result {
+                        case .success(let url):
+                            selectedImportURL = url
+                            activeAlert = .confirmImport
+                        case .failure(let error):
+                            print("インポート失敗: \(error.localizedDescription)")
+                            activeAlert = .importFailed
+                        }
+                    }
+                    .frame(width: 100, height: 100)
+                    .background {
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(Color(.secondarySystemGroupedBackground))
+                    }
+                }
+                    Spacer()
+                }
+                .padding(.horizontal)
+            }
+            .navigationTitle("Export or Import")
+        }
         .alert(item: $activeAlert, content: createAlert)
+        .fontDesign(.rounded)
     }
     
     func exportRealmData() -> Data? {
@@ -127,75 +233,89 @@ struct BackupView: View {
         if let jsonString = String(data: data, encoding: .utf8) {
             print("インポートデータ: \(jsonString)")
         }
-        guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-            print("JSON解析失敗: \(data)")
-            url.stopAccessingSecurityScopedResource()
-            return
-        }
         let realm = try! Realm()
         let dateFormatter = ISO8601DateFormatter()
-        try! realm.write {
-            realm.deleteAll()
-            if let eventData = json["eventData"] as? [[String: Any]] {
-                for var dict in eventData {
-                    if let base64String = dict["colorData"] as? String,
-                       let decodedData = Data(base64Encoded: base64String) {
-                        dict["colorData"] = decodedData
+        do {
+            // JSONの解析
+            guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+                throw ImportError.invalidFormat
+            }
+            // 必要なキーがあるかチェック
+            if json["eventData"] == nil || json["calendarEventData"] == nil || json["holidayData"] == nil {
+                throw ImportError.missingKeys
+            }
+            // データのインポート処理
+            try realm.write {
+                realm.deleteAll() // 既存データを削除
+                // イベントデータの処理
+                if let eventData = json["eventData"] as? [[String: Any]] {
+                    for var dict in eventData {
+                        if let base64String = dict["colorData"] as? String,
+                           let decodedData = Data(base64Encoded: base64String) {
+                            dict["colorData"] = decodedData
+                        }
+                        
+                        if let startDateString = dict["eventStartDate"] as? String,
+                           let startDate = dateFormatter.date(from: startDateString) {
+                            dict["eventStartDate"] = startDate
+                        }
+                        if let endDateString = dict["eventEndDate"] as? String,
+                           let endDate = dateFormatter.date(from: endDateString) {
+                            dict["eventEndDate"] = endDate
+                        }
+                        
+                        let event = EventDate(value: dict)
+                        realm.add(event)
                     }
-                    
-                    if let startDateString = dict["eventStartDate"] as? String,
-                       let startDate = dateFormatter.date(from: startDateString) {
-                        dict["eventStartDate"] = startDate
+                }
+                // カレンダーイベントデータの処理
+                if let calendarEventData = json["calendarEventData"] as? [[String: Any]] {
+                    for var dict in calendarEventData {
+                        if let startDateString = dict["eventStartDate"] as? String,
+                           let startDate = dateFormatter.date(from: startDateString) {
+                            dict["eventStartDate"] = startDate
+                        }
+                        if let endDateString = dict["eventEndDate"] as? String,
+                           let endDate = dateFormatter.date(from: endDateString) {
+                            dict["eventEndDate"] = endDate
+                        }
+                        
+                        if let base64String = dict["colorData"] as? String,
+                           let decodedData = Data(base64Encoded: base64String) {
+                            dict["colorData"] = decodedData
+                        }
+                        
+                        let event = CalendarEvent(value: dict)
+                        realm.add(event)
                     }
-                    if let endDateString = dict["eventEndDate"] as? String,
-                       let endDate = dateFormatter.date(from: endDateString) {
-                        dict["eventEndDate"] = endDate
+                }
+                // 祝日データの処理
+                if let holidayData = json["holidayData"] as? [[String: Any]] {
+                    for dict in holidayData {
+                        let holiday = RealmHoliday(value: dict)
+                        realm.add(holiday)
                     }
-                    
-                    let event = EventDate(value: dict)
-                    realm.add(event)
                 }
             }
-            if let calendarEventData = json["calendarEventData"] as? [[String: Any]] {
-                for var dict in calendarEventData {
-                    if let startDateString = dict["eventStartDate"] as? String,
-                       let startDate = dateFormatter.date(from: startDateString) {
-                        dict["eventStartDate"] = startDate
-                    }
-                    if let endDateString = dict["eventEndDate"] as? String,
-                       let endDate = dateFormatter.date(from: endDateString) {
-                        dict["eventEndDate"] = endDate
-                    }
-                    
-                    if let base64String = dict["colorData"] as? String,
-                       let decodedData = Data(base64Encoded: base64String) {
-                        dict["colorData"] = decodedData
-                    }
-                    
-                    let event = CalendarEvent(value: dict)
-                    realm.add(event)
-                }
-            }
-            if let holidayData = json["holidayData"] as? [[String: Any]] {
-                for dict in holidayData {
-                    let holiday = RealmHoliday(value: dict)
-                    realm.add(holiday)
-                }
-            }
+            print("バックアップのインポートが完了しました")
+            activeAlert = .importSuccessful
+        } catch {
+            print("インポートエラー: \(error.localizedDescription)")
+            errorMessage = error.localizedDescription
+            activeAlert = .importFailed
         }
-        print("バックアップのインポートが完了しました")
-        activeAlert = .importSuccessful
+        // セキュリティスコープを解放
         url.stopAccessingSecurityScopedResource()
     }
-    
+
     private func createAlert(for alertType: AlertType) -> Alert {
         switch alertType {
             
         case .confirmBackup:
             return Alert(
                 title: Text("Backup Confirmation"),
-                message: Text("Do you want to create a backup?\nExport to “Files” App."),
-                primaryButton: .default(Text("OK")) {
+                message: Text("Do you want to create a backup file?\nExport to “Files” App."),
+                primaryButton: .default(Text("Export")) {
                     if let data = exportRealmData() {
                         exportData = data
                         showExporter = true
@@ -208,7 +328,7 @@ struct BackupView: View {
             
         case .backupSuccess:
             return Alert(
-                title: Text("Backup Successful"),
+                title: Text("Export Successful"),
                 message: Text("Backup export succeeded."),
                 dismissButton: .default(Text("Close")))
             
@@ -222,7 +342,7 @@ struct BackupView: View {
             return Alert(
                 title: Text("Confirm Import"),
                 message: Text("Do you want to import from a selected file?"),
-                primaryButton: .default(Text("OK")) {
+                primaryButton: .default(Text("Import")) {
                     if let url = selectedImportURL {
                         importRealmData(from: url)
                     }
@@ -239,8 +359,9 @@ struct BackupView: View {
         case .importFailed:
             return Alert(
                 title: Text("Import Failed"),
-                message: Text("Import of backup failed."),
-                dismissButton: .default(Text("Close")))
+                message: Text(errorMessage ?? "The backup file format is incorrect."),
+                dismissButton: .default(Text("OK"))
+            )
             
         case .custom(let message):
             return Alert(

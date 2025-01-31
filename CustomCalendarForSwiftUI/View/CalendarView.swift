@@ -101,6 +101,7 @@ struct CalendarView: View {
             }
         }
         .animation(.default, value: isPickerVisible)
+        .fontDesign(.rounded)
     }
     
     private var headerView: some View {
@@ -117,7 +118,7 @@ struct CalendarView: View {
             Spacer()
             
             Text(getCurrentMonthYear())
-                .font(.headline)
+                .font(.title2.bold())
                 .foregroundStyle(Color.primary)
                 .onTapGesture {
                     isPickerVisible.toggle() // Picker をトグル表示
@@ -135,6 +136,7 @@ struct CalendarView: View {
             .symbolEffect(.bounce.down.wholeSymbol, value: isRightButton)
             .disabled(!isWithinBounds(currentMonth + 1) || isPickerVisible) // 範囲外またはピッカーが表示中の場合ボタン無効化
         }
+        .fontDesign(.rounded)
     }
     
     private func changeMonth(by offset: Int) {
@@ -212,6 +214,7 @@ struct CalendarMonthView: View {
                 }
             }
         }
+        .fontDesign(.rounded)
     }
     
     private func getDaysForMonth() -> [Date?] {
@@ -271,17 +274,17 @@ struct DayView: View {
                 }
                 
                 // イベントタイトルを取得して表示
-                if let eventTitle = getEventTitle(for: date) {
-                    Text(eventTitle.prefix(8))
+                if let eventData = getUpcomingEvent(for: date) {
+                    Text(eventData.title.prefix(8))
                         .font(.footnote)
-                        .foregroundStyle(getEventColor(for: date))
+                        .foregroundStyle(eventData.isPast ? Color.gray : eventData.color)
                         .multilineTextAlignment(.center)
                         .frame(minHeight: 20)
                         .frame(maxHeight: 40)
                 } else {
                     Text("")
                         .font(.footnote)
-                        .foregroundStyle(getEventColor(for: date))
+                        .foregroundStyle(Color.primary)
                         .multilineTextAlignment(.center)
                         .frame(minHeight: 20)
                         .frame(maxHeight: 40)
@@ -294,6 +297,7 @@ struct DayView: View {
                 onLongTap(date) // ロングタップされた日付を渡す
             }
         }
+        .fontDesign(.rounded)
     }
     
     private func getDateColor(for date: Date) -> Color {
@@ -316,13 +320,6 @@ struct DayView: View {
         }
     }
     
-    private func getEventColor(for date: Date) -> Color {
-        if let matchedEvent = events.first(where: { calendar.isDate($0.eventStartDate, inSameDayAs: date) }) {
-            return decodeDataToColor(matchedEvent.colorData) // 色をデコードして返す
-        }
-        return Color.primary // デフォルトの色
-    }
-    
     func decodeDataToColor(_ data: Data?) -> Color {
         guard let data = data,
               let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) else {
@@ -331,12 +328,27 @@ struct DayView: View {
         return Color(uiColor)
     }
     
-    private func getEventTitle(for date: Date) -> String? {
-        let matchedEvent = events.first { event in
-            calendar.isDate(event.eventStartDate, inSameDayAs: date)
+    private func getUpcomingEvent(for date: Date) -> (title: String, color: Color, isPast: Bool)? {
+        // 指定日のイベントを取得し、開始時刻順にソート
+        let eventsForDay = events
+            .filter { calendar.isDate($0.eventStartDate, inSameDayAs: date) }
+            .sorted { $0.eventStartDate < $1.eventStartDate }
+
+        let now = Date()
+
+        // 現在時刻より後のイベントを探す
+        if let upcomingEvent = eventsForDay.first(where: { $0.eventStartDate > now }) {
+            return (upcomingEvent.eventTitle, decodeDataToColor(upcomingEvent.colorData), false)
         }
-        return matchedEvent?.eventTitle
+
+        // すべて過去のイベントなら最も遅いものを取得し、グレーアウト
+        if let lastEvent = eventsForDay.last {
+            return (lastEvent.eventTitle, decodeDataToColor(lastEvent.colorData), true)
+        }
+
+        return nil
     }
+
     
     private func isSelected(_ date: Date) -> Bool {
         selectedDates.contains(where: { calendar.isDate($0, inSameDayAs: date) })
