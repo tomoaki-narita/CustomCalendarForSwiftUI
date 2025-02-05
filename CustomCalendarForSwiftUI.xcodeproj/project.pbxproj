@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E71207322D216965004A5291 /* EventDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E71207312D216965004A5291 /* EventDate.swift */; };
 		E745185E2D48E3BF009AC781 /* BackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E745185D2D48E3BF009AC781 /* BackupView.swift */; };
+		E768E2FF2D5245390004BBD0 /* Pacifico-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E768E2FE2D5245390004BBD0 /* Pacifico-Regular.ttf */; };
+		E768E3042D52540C0004BBD0 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768E3032D52540C0004BBD0 /* SplashView.swift */; };
 		E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */; };
 		E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380C72D1E41EA00027E22 /* ContentView.swift */; };
 		E78380CA2D1E41EF00027E22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E78380C92D1E41EF00027E22 /* Assets.xcassets */; };
@@ -42,6 +44,8 @@
 		E71207312D216965004A5291 /* EventDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDate.swift; sourceTree = "<group>"; };
 		E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CustomCalendarForSwiftUI.entitlements; sourceTree = "<group>"; };
 		E745185D2D48E3BF009AC781 /* BackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupView.swift; sourceTree = "<group>"; };
+		E768E2FE2D5245390004BBD0 /* Pacifico-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pacifico-Regular.ttf"; sourceTree = "<group>"; };
+		E768E3032D52540C0004BBD0 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		E78380C22D1E41EA00027E22 /* CustomCalendarForSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CustomCalendarForSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarForSwiftUIApp.swift; sourceTree = "<group>"; };
 		E78380C72D1E41EA00027E22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -68,6 +72,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E768E2FD2D5245060004BBD0 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				E768E2FE2D5245390004BBD0 /* Pacifico-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		E78380B92D1E41EA00027E22 = {
 			isa = PBXGroup;
 			children = (
@@ -87,6 +99,7 @@
 		E78380C42D1E41EA00027E22 /* CustomCalendarForSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				E768E2FD2D5245060004BBD0 /* Fonts */,
 				E7CCD58D2D43B2A3009E98BD /* Model */,
 				E7CCD58C2D43B29C009E98BD /* View */,
 				E78380C72D1E41EA00027E22 /* ContentView.swift */,
@@ -115,6 +128,7 @@
 				E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */,
 				E745185D2D48E3BF009AC781 /* BackupView.swift */,
 				E7D52E4D2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift */,
+				E768E3032D52540C0004BBD0 /* SplashView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -194,6 +208,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E768E2FF2D5245390004BBD0 /* Pacifico-Regular.ttf in Resources */,
 				E78380CD2D1E41EF00027E22 /* Preview Assets.xcassets in Resources */,
 				E78380CA2D1E41EF00027E22 /* Assets.xcassets in Resources */,
 			);
@@ -213,6 +228,7 @@
 				E7D52E4E2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift in Sources */,
 				E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */,
 				E78380DE2D1E474F00027E22 /* EditView.swift in Sources */,
+				E768E3042D52540C0004BBD0 /* SplashView.swift in Sources */,
 				E7D52E4C2D4B5A0F002BE578 /* FetchCalendarEventsIntent.swift in Sources */,
 				E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */,
 				E745185E2D48E3BF009AC781 /* BackupView.swift in Sources */,
@@ -354,6 +370,8 @@
 				DEVELOPMENT_TEAM = DU562ND7L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CustomCalendarForSwiftUI/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "<key>NSPrivacy - Camera Usage Description</key>";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access to iOS Calendar is required to register events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -389,6 +407,8 @@
 				DEVELOPMENT_TEAM = DU562ND7L2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CustomCalendarForSwiftUI/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "<key>NSPrivacy - Camera Usage Description</key>";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access to iOS Calendar is required to register events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

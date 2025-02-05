@@ -70,6 +70,7 @@ struct EventDetailModal: View {
                                         }
                                     }
                                 }
+                                .listRowBackground(Color(decodeDataToColor(event.colorData).opacity(0.3)))
                                 .tint(.primary)
                             } header: {
                                 HStack {

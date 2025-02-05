@@ -26,6 +26,8 @@ struct ContentView: View {
     @StateObject private var eventViewModel = EventViewModel()
     @StateObject private var viewModel = HolidayViewModel()
     @State private var tappedDate: Date? = nil  // ロングタップされた日付
+    @State private var blurEffectView: UIVisualEffectView?
+    @Environment(\.scenePhase) var scenePhase
     
     private enum AlertType: Identifiable {
         case noDateSelected
@@ -44,7 +46,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                                Color(.systemGroupedBackground).ignoresSafeArea()
+                Color(.systemGroupedBackground).ignoresSafeArea()
                 VStack {
                     CalendarView(
                         currentMonth: $currentMonth,
@@ -109,23 +111,10 @@ struct ContentView: View {
                             
                         }
                         Spacer()
-                        
-                        
-//                        Button("print") {
-//                            fetchAndPrintSavedEvents()
-//                        }
-//                        
-//                        Button("delete") {
-//                            print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
-//
-//                        }
-                        
-                        
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .allowsHitTesting(!showEventPickerView) //opacityが0になるとタップできなくなるため不要だが一応残す
                     .opacity(showEventPickerView ? 0 : 1)
-                    
                 }
                 .padding()
                 .sheet(item: $tappedDate) { date in
@@ -134,6 +123,15 @@ struct ContentView: View {
                 }
                 .onAppear {
                     eventViewModel.fetchEvents()
+                }
+                .onChange(of: scenePhase) { newPhase, error in
+                    if newPhase == .background || newPhase == .inactive {
+                        // アプリがバックグラウンドまたは非アクティブになったときにブラーを追加
+                        removeBlurEffect()
+                    } else if newPhase == .active {
+                        // アプリがフォアグラウンドに戻ったときにブラーを削除
+                        addBlurEffect()
+                    }
                 }
             }
         }
@@ -290,6 +288,57 @@ struct ContentView: View {
         }
     }
     
+    func addBlurEffect() {
+        guard blurEffectView == nil else { return }
+        // UIApplicationからwindowSceneとwindowを安全に取得
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            // ブラーエフェクトを作成
+            let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+            blurEffectView = UIVisualEffectView(effect: blurEffect)
+            blurEffectView?.alpha = 0.0
+            // ウィンドウのサイズに合わせてブラーエフェクトのサイズを設定
+            blurEffectView?.frame = window.bounds
+            if scenePhase == .inactive || scenePhase == .background{
+                window.addSubview(blurEffectView!)
+                //iconの名前。Assets.xcassetsに任意の画像
+                if let appIcon = UIImage(named: "appIconImage") {
+                    let iconImageView = UIImageView(image: appIcon)
+                    //bulurに乗せるiconの大きさ
+                    let iconSize: CGFloat = 100
+                    //iconの表示位置
+                    iconImageView.frame = CGRect(x: (window.bounds.width - iconSize) / 2,
+                                                 y: (window.bounds.height - iconSize) / 2,
+                                                 width: iconSize,
+                                                 height: iconSize
+                    )
+                    iconImageView.clipsToBounds = true
+                    iconImageView.contentMode = .scaleAspectFit
+                    iconImageView.alpha = 0.0
+                    iconImageView.layer.cornerRadius = 20
+                    blurEffectView?.contentView.addSubview(iconImageView)
+                    UIView.animate(withDuration: 0.2) {
+                        self.blurEffectView?.alpha = 1.0
+                        iconImageView.alpha = 1.0
+                    }
+                }
+            }
+        } else {
+            print("ウィンドウが取得できませんでした")
+        }
+    }
+    
+    func removeBlurEffect() {
+        // ブラーが存在する場合にのみ削除
+        if scenePhase == .active {
+            UIView.animate(withDuration: 0.2, animations: {
+                self.blurEffectView?.alpha = 0.0
+            }, completion: { _ in
+                blurEffectView?.removeFromSuperview()
+                blurEffectView = nil // メモリを解放
+            })
+        }
+    }
 }
 
 extension Date: @retroactive Identifiable {

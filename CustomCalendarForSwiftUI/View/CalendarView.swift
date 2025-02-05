@@ -21,7 +21,7 @@ struct CalendarView: View {
     var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
     @ObservedObject var viewModel: HolidayViewModel
     
-        var body: some View {
+    var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 headerView
@@ -212,6 +212,8 @@ struct CalendarMonthView: View {
                         toggleDateSelection(date)
                     }
                 }
+                
+                
             }
         }
         .fontDesign(.rounded)
@@ -251,6 +253,7 @@ struct DayView: View {
     private let calendar = Calendar.current
     let events: [CalendarEvent] // イベントデータを追加
     var onLongTap: (Date) -> Void // 追加: ロングタップ時のクロージャ
+    private let eventTitleHeight: CGFloat = 20
     @ObservedObject var viewModel: HolidayViewModel
     
     var body: some View {
@@ -262,7 +265,7 @@ struct DayView: View {
                         Text("\(calendar.component(.day, from: date))")
                             .font(.title3)
                             .foregroundStyle(getDateColor(for: date))
-//                            .foregroundStyle(isSelected(date) ? Color.white : (isToday(date) ? .accentColor : .primary))  // 現在の日付のテキスト色をaccentColorに変更
+                        // 現在の日付のテキスト色をaccentColorに変更
                             .frame(width: geometry.size.width, height: geometry.size.height) // Textを中央に配置
                             .multilineTextAlignment(.center)
                             .background(
@@ -274,20 +277,37 @@ struct DayView: View {
                 }
                 
                 // イベントタイトルを取得して表示
-                if let eventData = getUpcomingEvent(for: date) {
-                    Text(eventData.title.prefix(8))
-                        .font(.footnote)
-                        .foregroundStyle(eventData.isPast ? Color.gray : eventData.color)
-                        .multilineTextAlignment(.center)
-                        .frame(minHeight: 20)
-                        .frame(maxHeight: 40)
+                if let eventDataList = getUpcomingEvents(for: date), !eventDataList.isEmpty {
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(eventDataList, id: \.title) { eventData in
+                            HStack(spacing: 0) {
+                                RoundedRectangle(cornerRadius: 10, style: .circular)
+                                    .frame(width: 3, height: 10)
+                                    .foregroundStyle(Color(eventData.color))
+                                    .padding(.leading, 3)
+                                
+                                Text(eventData.title)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 4)
+                                    .font(.footnote)
+                                    .foregroundStyle(Color(eventData.isPast ? Color(.systemGray2) : .primary))
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(1)
+                            }
+                            .background {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color(eventData.color.opacity(0.3)))
+                            }
+                            .padding(.horizontal, 1)
+                        }
+                    }
+                    .frame(height: eventTitleHeight, alignment: .top)
                 } else {
                     Text("")
                         .font(.footnote)
-                        .foregroundStyle(Color.primary)
+                        .foregroundStyle(Color.clear)
                         .multilineTextAlignment(.center)
-                        .frame(minHeight: 20)
-                        .frame(maxHeight: 40)
+                        .frame(height: eventTitleHeight)
                 }
             }
         }
@@ -328,27 +348,23 @@ struct DayView: View {
         return Color(uiColor)
     }
     
-    private func getUpcomingEvent(for date: Date) -> (title: String, color: Color, isPast: Bool)? {
-        // 指定日のイベントを取得し、開始時刻順にソート
+    private func getUpcomingEvents(for date: Date) -> [(title: String, color: Color, isPast: Bool)]? {
         let eventsForDay = events
             .filter { calendar.isDate($0.eventStartDate, inSameDayAs: date) }
             .sorted { $0.eventStartDate < $1.eventStartDate }
-
         let now = Date()
-
-        // 現在時刻より後のイベントを探す
-        if let upcomingEvent = eventsForDay.first(where: { $0.eventStartDate > now }) {
-            return (upcomingEvent.eventTitle, decodeDataToColor(upcomingEvent.colorData), false)
+        let upcomingEvents = eventsForDay.filter { $0.eventStartDate > now }
+        if !upcomingEvents.isEmpty {
+            return upcomingEvents.prefix(2).map {
+                (title: $0.eventTitle, color: decodeDataToColor($0.colorData), isPast: false)
+            }
         }
-
-        // すべて過去のイベントなら最も遅いものを取得し、グレーアウト
+        // すべて過去のイベントなら最も遅いものを1つだけ取得
         if let lastEvent = eventsForDay.last {
-            return (lastEvent.eventTitle, decodeDataToColor(lastEvent.colorData), true)
+            return [(lastEvent.eventTitle, decodeDataToColor(lastEvent.colorData), true)]
         }
-
         return nil
     }
-
     
     private func isSelected(_ date: Date) -> Bool {
         selectedDates.contains(where: { calendar.isDate($0, inSameDayAs: date) })

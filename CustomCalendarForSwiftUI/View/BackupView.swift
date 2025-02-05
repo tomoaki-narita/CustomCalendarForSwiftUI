@@ -17,7 +17,7 @@ struct BackupView: View {
     @State private var activeAlert: AlertType? = nil
     @State private var errorMessage: String? = nil
     
-    private let exportFlowString: Array = ["Tap the Export button", "When the backup confirmation pop-up appears, tap the OK button.", "When the \"Files\" app starts, save (\"Move\") it to your desired location.", "The backup is complete when a \"Backup Successful\" pop-up appears."
+    private let exportFlowString: Array = ["Tap the Export button", "When the backup confirmation pop-up appears, tap the OK button.", "When the \"Files\" app starts, \"Save\" (\"Move\") it to your desired location.", "The backup is complete when a \"Backup Successful\" pop-up appears."
     ]
     
     private let importFlowString: Array = ["Tap the Import button", "When the \"Files\" app starts, select the JSON file you want to import.", "When the import confirmation pop-up appears, tap the OK button.", "The import is complete when the \"Import Successful\" pop-up appears."
@@ -76,14 +76,14 @@ struct BackupView: View {
                         Image(systemName: "square.and.arrow.up")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("Export flow")
+                        Text("Export")
                             .font(.title2)
                             .fontWeight(.bold)
                     }
                     .padding(.top)
                     .foregroundStyle(.primary.opacity(0.8))
                     
-                    VStack(alignment: .leading, spacing: 15) {
+                    VStack(alignment: .leading, spacing: 5) {
                         ForEach(exportFlowString, id: \.self) { item in
                             HStack(alignment: .top) {
                                 Text("\(exportFlowString.firstIndex(of: item)! + 1).")
@@ -91,6 +91,7 @@ struct BackupView: View {
                                     .fontWeight(.bold)
                                 Text(item)
                                     .font(.body)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                             
                         }
@@ -103,14 +104,14 @@ struct BackupView: View {
                         Image(systemName: "square.and.arrow.down")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("Import flow")
+                        Text("Import")
                             .font(.title2)
                             .fontWeight(.bold)
                     }
                     .padding(.top)
                     .foregroundStyle(.primary.opacity(0.8))
                     
-                    VStack(alignment: .leading, spacing: 15) {
+                    VStack(alignment: .leading, spacing: 5) {
                         ForEach(importFlowString, id: \.self) { item in
                             HStack(alignment: .top) {
                                 Text("\(importFlowString.firstIndex(of: item)! + 1).")
@@ -118,6 +119,7 @@ struct BackupView: View {
                                     .fontWeight(.bold)
                                 Text(item)
                                     .font(.body)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
                     }
@@ -192,7 +194,7 @@ struct BackupView: View {
                 }
                 .padding(.horizontal)
             }
-            .navigationTitle("Export or Import")
+            .navigationTitle("Export & Import")
         }
         .alert(item: $activeAlert, content: createAlert)
         .fontDesign(.rounded)
@@ -341,7 +343,7 @@ struct BackupView: View {
         case .confirmImport:
             return Alert(
                 title: Text("Confirm Import"),
-                message: Text("Do you want to import from a selected file?"),
+                message: Text("Do you want to import from the selected file?\nExisting calendar and event data will be deleted and replaced with the imported data."),
                 primaryButton: .default(Text("Import")) {
                     if let url = selectedImportURL {
                         importRealmData(from: url)

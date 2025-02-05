@@ -27,6 +27,7 @@ struct CopyingIosCalendarEvents: View {
     @State private var eventsToCopy: [CalendarEvent] = []
     @State private var showNoEventsAlert: Bool = false
     @State private var showConfirmationAlert: Bool = false
+    @State private var showDefaultCalendarAlert: Bool = false
     
     var years: [Int] {
         let currentYear = Calendar.current.component(.year, from: Date())
@@ -46,14 +47,14 @@ struct CopyingIosCalendarEvents: View {
                         Image(systemName: "square.and.arrow.up")
                             .font(.title2)
                             .fontWeight(.bold)
-                        Text("Export flow")
+                        Text("Export")
                             .font(.title2)
                             .fontWeight(.bold)
                     }
                     .padding(.top)
                     .foregroundStyle(.primary.opacity(0.8))
                     
-                    VStack(alignment: .leading, spacing: 15) {
+                    VStack(alignment: .leading, spacing: 5) {
                         ForEach(importFlowString, id: \.self) { item in
                             HStack(alignment: .top) {
                                 Text("\(importFlowString.firstIndex(of: item)! + 1).")
@@ -61,6 +62,7 @@ struct CopyingIosCalendarEvents: View {
                                     .fontWeight(.bold)
                                 Text(item)
                                     .font(.body)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                             
                         }
@@ -68,18 +70,21 @@ struct CopyingIosCalendarEvents: View {
                     .foregroundStyle(.primary)
                     .padding(.horizontal)
                     .foregroundStyle(.primary.opacity(0.8))
-                    
+                    Spacer()
                     HStack {
                         Text("Default calendar")
                         Spacer()
                         Text(getDefaultCalendarTitle())
                             .foregroundColor(getDefaultCalendarTitle() != getDefaultCalendarTitle() ? .primary : .gray)
                             .font(.body)
+                            .onTapGesture {
+                                showDefaultCalendarAlert.toggle()
+                            }
                     }
-                    .frame(minHeight: 40)
-                    .padding(10)
+                    .frame(minHeight: 50)
+                    .padding(.horizontal, 15)
                     .background {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.secondarySystemGroupedBackground))
                     }
                     
@@ -112,10 +117,10 @@ struct CopyingIosCalendarEvents: View {
                         Spacer()
                         
                     }
-                    .frame(minHeight: 40)
-                    .padding(10)
+                    .frame(minHeight: 50)
+                    .padding(.horizontal, 15)
                     .background {
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.secondarySystemGroupedBackground))
                     }
                     
@@ -180,6 +185,15 @@ struct CopyingIosCalendarEvents: View {
             Button("OK") {}
         }, message: {
             Text("Successfully exported to iOS calendar.")
+        })
+        .alert("Change the default calendar", isPresented: $showDefaultCalendarAlert, actions: {
+            Button("OK") {}
+        }, message: {
+            VStack {
+                Text("Open the \"Settings app\"\n  Go to \"Apps\" → \"Calendar\"\nand you will see an item called\n\"Default Calendar\".")
+                
+            }
+            
         })
     }
     

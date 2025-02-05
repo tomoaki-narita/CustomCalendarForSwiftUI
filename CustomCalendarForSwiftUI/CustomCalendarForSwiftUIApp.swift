@@ -29,7 +29,7 @@ struct CustomCalendarForSwiftUI: SwiftUI.App {  // Appという名前をCustomCa
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView()
         }
     }
 }

@@ -94,7 +94,7 @@ struct EditView: View {
                     .tint(.primary)
                     
                     Section {
-                        NavigationLink("Export or Import", destination: BackupView())
+                        NavigationLink("Export & Import", destination: BackupView())
                     } header: {
                         HStack {
                             Image(systemName: "arrow.up.arrow.down")
