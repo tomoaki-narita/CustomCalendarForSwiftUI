@@ -7,43 +7,31 @@
 
 import SwiftUI
 import RealmSwift
+import EventKit
+
+enum NavigationDestination: Hashable {
+    case copyEvents
+}
 
 struct EditView: View {
+    @EnvironmentObject var themeManager: AppThemeManager
     @State var isEditViewVisible: Bool = false
     @State var editingEvent: EventDate? = nil
-    @State var eventListIsExpanded: Bool = true
+    @State var eventListIsExpanded: Bool = false
+    @State private var isShowDeniedAlert = false
+    @State private var isAuthorized = false
     @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
+    private let eventStore = EKEventStore()
     let plusImage: Image = Image(systemName: "plus")
-    let starImage: Image = Image(systemName: "star.fill").symbolRenderingMode(.multicolor)
-    let clockImage: Image = Image(systemName: "clock").symbolRenderingMode(.multicolor)
-    let memoImage: Image = Image(systemName: "note.text").symbolRenderingMode(.multicolor)
+//    let starImage: Image = Image(systemName: "star.fill")
+    let clockImage: Image = Image(systemName: "clock")
+    let memoImage: Image = Image(systemName: "note.text")
     
     var body: some View {
         NavigationStack {
             ZStack {
+                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
                 List {
-                    Section {
-                        Button {
-                            isEditViewVisible = true
-                            editingEvent = nil // 新規作成モード
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Create new event")
-                                    .tint(.primary)
-                                plusImage.font(.footnote)
-                                    .tint(.primary)
-                                Spacer()
-                            }
-                        }
-                        .sheet(isPresented: $isEditViewVisible) {
-                            CreateNewEventView(
-                                editingEvent: $editingEvent,
-                                selectedColor: .primary
-                            )
-                        }
-                    }
-                    
                     Section(isExpanded: $eventListIsExpanded, content: {
                         ForEach(events, id: \.id) { event in
                             HStack {
@@ -52,19 +40,26 @@ struct EditView: View {
                                     .foregroundStyle(decodeDataToColor(event.colorData))
                                 Text(event.eventTitle)
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                 if let memo = event.eventMemo, !memo.isEmpty {
-                                    memoImage.font(.footnote).opacity(0.25)
+                                    memoImage.font(.footnote)
+                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
                                 }
                                 Spacer()
-                                HStack(spacing: 3) {
+                                HStack(spacing: 5) {
                                     if event.allDay {
-                                        starImage.font(.footnote).opacity(0.25)
+                                        Text("All day")
+                                            .font(.caption)
+                                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
                                     }
                                     Text("\(formatDate(event.eventStartDate))")
                                         .font(.footnote)
+                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                     Text("-")
+                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                     Text("\(formatDate(event.eventEndDate))")
                                         .font(.footnote)
+                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                 }
                             }
                             .swipeActions(edge: .leading) {
@@ -85,16 +80,55 @@ struct EditView: View {
                         HStack {
                             Image(systemName: "square.and.pencil")
                                 .font(.headline)
-                            Text("Event list")
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            Text("Event template")
                                 .fontWeight(.semibold)
                                 .font(.title2)
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                         }
                     })
                     .frame(minHeight:40)
-                    .tint(.primary)
+                    .tint(Color(themeManager.currentTheme.tertiaryColor))
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+
+                    Section {
+                        HStack {
+                            Spacer()
+                            Button {
+                                isEditViewVisible = true
+                                editingEvent = nil // 新規作成モード
+                            } label: {
+                                Text("\(plusImage) New event")
+                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            }
+                            
+                            .sheet(isPresented: $isEditViewVisible) {
+                                CreateNewEventViewForEventDate(
+                                    editingEvent: $editingEvent,
+                                    selectedColor: .primary
+                                )
+                            }
+                            Spacer()
+                        }
+                    }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                     
                     Section {
-                        NavigationLink("Export & Import", destination: BackupView())
+                        NavigationLink("\(themeManager.currentTheme)", destination: ThemeSelectionView())
+                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            .textCase(.uppercase)
+                    } header: {
+                        Text("Theme")
+                            .fontWeight(.semibold)
+                            .font(.title2)
+                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                    }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+                    
+                    Section {
+                        NavigationLink("Export and Import", destination: BackupView())
+                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            
                     } header: {
                         HStack {
                             Image(systemName: "arrow.up.arrow.down")
@@ -103,10 +137,27 @@ struct EditView: View {
                                 .fontWeight(.semibold)
                                 .font(.title2)
                         }
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                     }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                     
                     Section {
-                        NavigationLink("Export to iOS calendar", destination: CopyingIosCalendarEvents())
+                        if isAuthorized {
+                            NavigationLink("Export to iOS calendar", destination: CopyingIosCalendarEvents())
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                        } else {
+                            HStack {
+                                Button("No access rights") {
+                                    requestCalendarAccess()
+                                }
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
+                                Spacer()
+                                Image(systemName: "gear")
+                                    .font(.footnote)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            }
+                        }
                     } header: {
                         HStack {
                             Image(systemName: "arrow.up")
@@ -115,22 +166,45 @@ struct EditView: View {
                                 .fontWeight(.semibold)
                                 .font(.title2)
                         }
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                     }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                 }
-                //                .scrollContentBackground(.hidden)
+                .scrollContentBackground(.hidden)
                 .toolbar {
                     EditButton()
-                        .tint(.primary)
+                        .tint(Color(themeManager.currentTheme.tertiaryColor))
                 }
-                .navigationTitle("Event")
-                .navigationBarTitleDisplayMode(.large)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Event")
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .foregroundColor(themeManager.currentTheme.tertiaryColor)
+                    }
+                }
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(Color(themeManager.currentTheme.primaryColor), for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
                 .listStyle(.sidebar)
                 .headerProminence(.increased)
+                .navigationBarBackButtonTextHidden()
+                
             }
         }
-        .fontDesign(.rounded)
+        .alert("Permission is required to access the calendar.", isPresented: $isShowDeniedAlert) {
+            Button("Close", role: .cancel) {}
+            Button("Settings App") {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        } message: {
+            Text("This app requires permission to access your calendar.")
+        }
+        .onAppear {
+            isAuthorized = authorizationStatus()
+        }
     }
-
+    
     func moveEvent(from source: IndexSet, to destination: Int) {
         _ = source.map { events[$0] }
         var updatedEvents = Array(events)
@@ -165,270 +239,48 @@ struct EditView: View {
         outputFormatter.dateFormat = "HH:mm"
         return outputFormatter.string(from: date)
     }
-}
-
-struct CreateNewEventView: View {
     
-    @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
-    @Binding var editingEvent: EventDate?
-    @State var eventTitle: String = ""
-    @State var eventMemo: String = ""
-    @State var eventStartDate: Date = Date()
-    @State var eventEndDate: Date = Date()
-    @State var allDayToggle: Bool = false
-    @State var selectedColor: Color
-    @State private var activeAlert: AlertType? = nil
-    @Environment(\.dismiss) private var dismiss
-    @FocusState private var focusdFieldForEventTitleTextField: Field?
-    @FocusState private var focusdFieldForEventMemoTextField: Field?
-    let starImage: Image = Image(systemName: "star.fill").symbolRenderingMode(.multicolor)
-    let textImage: Image = Image(systemName: "t.square").symbolRenderingMode(.multicolor)
-    let clockImage: Image = Image(systemName: "clock").symbolRenderingMode(.multicolor)
-    let memoImage: Image = Image(systemName: "note.text").symbolRenderingMode(.multicolor)
-    let colorImage: Image = Image(systemName: "swatchpalette").symbolRenderingMode(.multicolor)
-    
-    private enum Field: Hashable {
-        case eventName
-        case eventMemo
-    }
-    
-    private enum AlertType: Identifiable {
-        case emptyTitle
-        case invalidDateRange
-        case custom(String)
-        
-        var id: String {
-            switch self {
-            case .emptyTitle:
-                return "emptyTitle"
-            case .invalidDateRange:
-                return "invalidDateRange"
-            case .custom(let message):
-                return message
-            }
-        }
-    }
-    
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                List {
-                    Section {
-                        HStack {
-                            textImage.font(.footnote)
-                            Text("Event title")
-                            Spacer()
-                            TextField("Enter event title", text: $eventTitle)
-                                .focused($focusdFieldForEventTitleTextField, equals: Field.eventName)
-                                .multilineTextAlignment(TextAlignment.trailing)
-                            eventTitle != "" ?
-                            Button {
-                                eventTitle = ""
-                            } label: {
-                                Image(systemName: "delete.left")
-                                    .foregroundStyle(Color.gray)
-                                    .font(.footnote)
-                            }
-                            .buttonStyle(.plain)
-                            .padding(.leading, 2)
-                            : nil
-                        }
-                        .frame(minHeight: 40)
-                        
-                        HStack {
-                            clockImage.font(.footnote)
-                            DatePicker("Start", selection: $eventStartDate, displayedComponents: [.hourAndMinute])
-                                .environment(\.locale, .init(identifier: "ja"))
-                                .padding(.vertical, 1)
-                                .frame(minHeight: 40)
-                        }
-                        
-                        HStack {
-                            clockImage.font(.footnote)
-                            DatePicker("End", selection: $eventEndDate, displayedComponents: [.hourAndMinute])
-                                .environment(\.locale, .init(identifier: "ja"))
-                                .padding(.vertical, 1)
-                                .frame(minHeight: 40)
-                        }
-                        
-                        Toggle(isOn: $allDayToggle) {
-                            HStack {
-                                starImage.font(.footnote)
-                                Text("All day")
-                            }
-                            .frame(minHeight: 40)
-                        }
-                        
-                        HStack {
-                            memoImage.font(.footnote)
-                            Text("Memo")
-                            Spacer()
-                            TextField("Enter event memo", text: $eventMemo)
-                                .focused($focusdFieldForEventMemoTextField, equals: Field.eventMemo)
-                                .multilineTextAlignment(TextAlignment.trailing)
-                            eventMemo != "" ?
-                            Button {
-                                eventMemo = ""
-                            } label: {
-                                Image(systemName: "delete.left")
-                                    .foregroundStyle(Color.gray)
-                                    .font(.footnote)
-                            }
-                            .buttonStyle(.plain)
-                            .padding(.leading, 2)
-                            : nil
-                        }
-                        .frame(minHeight: 40)
-                        
-                        HStack {
-                            colorImage.font(.footnote)
-                            Text("Color")
-                            Spacer()
-                            ColorPicker("Select color", selection: $selectedColor, supportsOpacity: true)
-                                .labelsHidden()
-                        }
-                        .frame(minHeight: 40)
-                    }
-                    
-                    
-                    
-                    Section {
-                        HStack {
-                            Spacer()
-                            Button(editingEvent == nil ? "Add" : "Save") {
-                                handleSaveButtonTapped()
-                            }
-                            .tint(.primary)
-                            Spacer()
-                        }
-                    }
-                    //                    .listRowBackground(
-                    //                        RoundedRectangle(cornerRadius: 20)
-                    //                            .fill(Color.clear)
-                    //                            .padding(.vertical, 5)
-                    //                    )
-                }
-                .listStyle(.sidebar)
-                .navigationTitle(editingEvent == nil ? "Create Event" : "Edit Event")
-                .toolbar {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundStyle(Color.primary)
-                    }
-                }
-                .onAppear {
-                    if let editingEvent = editingEvent {
-                        eventTitle = editingEvent.eventTitle
-                        eventMemo = editingEvent.eventMemo ?? ""
-                        eventStartDate = stringToDate(editingEvent.eventStartDate) ?? Date()
-                        eventEndDate = stringToDate(editingEvent.eventEndDate) ?? Date()
-                        allDayToggle = editingEvent.allDay
-                        selectedColor = decodeDataToColor(editingEvent.colorData)
-                    }
-                }
-                .alert(item: $activeAlert, content: createAlert)
-            }
-        }
-    }
-    
-    func handleSaveButtonTapped() {
-        // タイトルが空かどうかを確認
-        if eventTitle.isEmpty {
-            activeAlert = .emptyTitle // タイトルが空の場合のアラート
-        }
-        // 日付の範囲が無効かどうかを確認
-        else if eventEndDate <= eventStartDate {
-            activeAlert = .invalidDateRange // 日付範囲が不正の場合のアラート
-        }
-        else {
-            let startDateStr = dateToString(eventStartDate)
-            let endDateStr = dateToString(eventEndDate)
-            let colorData = encodeColorToData(selectedColor)
-            
-            if let editingEvent = editingEvent {
-                // 編集の場合
-                if let eventToUpdate = events.first(where: { $0.id == editingEvent.id }) {
-                    do {
-                        let realm = try Realm()
-                        try realm.write {
-                            if let objectToUpdate = realm.object(ofType: EventDate.self, forPrimaryKey: eventToUpdate.id) {
-                                objectToUpdate.eventTitle = eventTitle
-                                objectToUpdate.eventMemo = eventMemo
-                                objectToUpdate.eventStartDate = startDateStr
-                                objectToUpdate.eventEndDate = endDateStr
-                                objectToUpdate.allDay = allDayToggle
-                                objectToUpdate.colorData = colorData
+    func requestCalendarAccess() {
+            if #available(iOS 17.0, *) {
+                eventStore.requestWriteOnlyAccessToEvents { granted, error in
+                    DispatchQueue.main.async {
+                        if granted || self.authorizationStatus() {
+                            isAuthorized = true // 許可が取れたら NavigationLink に変更
+                        } else {
+                            eventStore.requestFullAccessToEvents { granted, error in
+                                DispatchQueue.main.async {
+                                    if granted {
+                                        isAuthorized = true
+                                    } else {
+                                        isShowDeniedAlert = true
+                                    }
+                                }
                             }
                         }
-                    } catch {
-                        print("Error updating event: \(error.localizedDescription)")
                     }
                 }
             } else {
-                // 新規作成の場合
-                let newEvent = EventDate(
-                    eventTitle: eventTitle,
-                    eventStartDate: startDateStr,
-                    eventEndDate: endDateStr,
-                    eventMemo: eventMemo.isEmpty ? nil : eventMemo, // memoが空の場合はnil
-                    allDay: allDayToggle,
-                    id: UUID().uuidString, // 新規IDをUUIDで生成
-                    sortOrder: events.count, // 追加されるイベントの順番を設定
-                    colorData: colorData
-                )
-                
-                do {
-                    let realm = try Realm()
-                    try realm.write {
-                        realm.add(newEvent)
+                eventStore.requestAccess(to: .event) { granted, error in
+                    DispatchQueue.main.async {
+                        if granted {
+                            isAuthorized = true
+                        } else {
+                            isShowDeniedAlert = true
+                        }
                     }
-                } catch {
-                    print("Error saving new event: \(error.localizedDescription)")
                 }
             }
-            
-            dismiss()
         }
-    }
-    
-    func encodeColorToData(_ color: Color) -> Data? {
-        let uiColor = UIColor(color)
-        return try? NSKeyedArchiver.archivedData(withRootObject: uiColor, requiringSecureCoding: true)
-    }
-    
-    func decodeDataToColor(_ data: Data?) -> Color {
-        guard let data = data, let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) else {
-            return .black
+
+        func authorizationStatus() -> Bool {
+            let status = EKEventStore.authorizationStatus(for: .event)
+            return status == .fullAccess || status == .writeOnly
         }
-        return Color(uiColor)
-    }
-    
-    func stringToDate(_ dateString: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.date(from: dateString)
-    }
-    
-    func dateToString(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: date)
-    }
-    
-    private func createAlert(for alertType: AlertType) -> Alert {
-        switch alertType {
-        case .emptyTitle:
-            return Alert(title: Text("Error"), message: Text("Event title cannot be empty."), dismissButton: .default(Text("OK")))
-        case .invalidDateRange:
-            return Alert(title: Text("Error"), message: Text("End time must be later than start time."), dismissButton: .default(Text("OK")))
-        case .custom(let message):
-            return Alert(title: Text("Error"), message: Text(message), dismissButton: .default(Text("OK")))
-        }
-    }
 }
+
+
 
 #Preview {
     EditView()
+        .environmentObject(AppThemeManager())
 }

@@ -10,7 +10,7 @@ import RealmSwift
 
 @main
 struct CustomCalendarForSwiftUI: SwiftUI.App {  // Appという名前をCustomCalendarAppに変更
-    
+    @StateObject var themeManager = AppThemeManager()
     init() {
         // マイグレーション設定
         let config = Realm.Configuration(
@@ -30,6 +30,7 @@ struct CustomCalendarForSwiftUI: SwiftUI.App {  // Appという名前をCustomCa
     var body: some Scene {
         WindowGroup {
             SplashView()
+                .environmentObject(themeManager)
         }
     }
 }

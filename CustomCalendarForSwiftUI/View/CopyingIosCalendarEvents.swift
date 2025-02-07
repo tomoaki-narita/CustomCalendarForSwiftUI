@@ -10,7 +10,7 @@ import EventKit
 import RealmSwift
 
 struct CopyingIosCalendarEvents: View {
-    
+    @EnvironmentObject var themeManager: AppThemeManager
     let yearFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
@@ -18,7 +18,6 @@ struct CopyingIosCalendarEvents: View {
     }()
     
     var eventStore = EKEventStore()
-    @State private var isShowDeniedAlert: Bool = false
     @State private var isShowExportSuccessful: Bool = false
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: Date())
     @State private var selectedYear: Int = Calendar.current.component(.year, from: Date())
@@ -34,140 +33,134 @@ struct CopyingIosCalendarEvents: View {
         return Array((currentYear - 5)...(currentYear + 5))
     }
     
-    private let importFlowString: Array = ["Select year and month to export to iOS calendar.", "When the \"Confirm export\" pop-up appears, tap the Export button.", "The export is complete when you see a pop-up that says \"Export successful\"", "The calendar will be registered to the calendar specified in the \"Default Calendar\""
+    private let importFlowString: [String] = [
+        String(localized: "Select \"year\" and \"month\" to export to iOS Calendar."),
+        String(localized: "When the \"Confirm export\" pop-up appears, tap the Export button."),
+        String(localized: "The export is complete when you see a pop-up that says \"Export completed\""),
+        String(localized: "* It will be registered in the calendar specified as \"Default calendar\"")
     ]
     
     var body: some View {
         
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground).ignoresSafeArea()
-                VStack(spacing: 20) {
-                    HStack(alignment: .center) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Text("Export")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                    }
-                    .padding(.top)
-                    .foregroundStyle(.primary.opacity(0.8))
-                    
-                    VStack(alignment: .leading, spacing: 5) {
-                        ForEach(importFlowString, id: \.self) { item in
-                            HStack(alignment: .top) {
-                                Text("\(importFlowString.firstIndex(of: item)! + 1).")
-                                    .font(.body)
-                                    .fontWeight(.bold)
-                                Text(item)
-                                    .font(.body)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            
-                        }
-                    }
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal)
-                    .foregroundStyle(.primary.opacity(0.8))
-                    Spacer()
-                    HStack {
-                        Text("Default calendar")
-                        Spacer()
-                        Text(getDefaultCalendarTitle())
-                            .foregroundColor(getDefaultCalendarTitle() != getDefaultCalendarTitle() ? .primary : .gray)
-                            .font(.body)
-                            .onTapGesture {
-                                showDefaultCalendarAlert.toggle()
-                            }
-                    }
-                    .frame(minHeight: 50)
-                    .padding(.horizontal, 15)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.secondarySystemGroupedBackground))
-                    }
-                    
-                    HStack {
-                        Spacer()
-                        HStack(spacing: 0) {
-                            Text("Year")
-                            Picker("Year", selection: $selectedYear) {
-                                ForEach(years, id: \.self) { year in
-                                    Text("\(yearFormatter.string(from: NSNumber(value: year)) ?? "\(year)")").tag(year)
+                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                List {
+                    Section {
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(importFlowString, id: \.self) { item in
+                                HStack(alignment: .top) {
+                                    Text("\(importFlowString.firstIndex(of: item)! + 1).")
+                                        .font(.footnote)
+                                        .fontWeight(.bold)
+                                    Text(item)
+                                        .font(.footnote)
+                                        .fixedSize(horizontal: false, vertical: true)
                                 }
                             }
-                            .pickerStyle(.menu)
-                            .tint(.primary)
                         }
-                        
-                        Spacer()
-                        
-                        HStack(spacing: 0) {
-                            Text("Month")
-                            Picker("Month", selection: $selectedMonth) {
-                                ForEach(1...12, id: \.self) { month in
-                                    Text("\(month)").tag(month)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(.primary)
-                        }
-                        
-                        Spacer()
-                        
-                    }
-                    .frame(minHeight: 50)
-                    .padding(.horizontal, 15)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(.secondarySystemGroupedBackground))
-                    }
-                    
-                    Button {
-                        fetchAndPrintEventsForSelectedMonth()
-                    } label: {
-                        VStack {
+                        .padding(.horizontal)
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                    } header: {
+                        HStack(alignment: .center) {
                             Image(systemName: "square.and.arrow.up")
+                                .font(.headline)
+                                .fontWeight(.bold)
                             Text("Export")
+                                .font(.headline)
+                                .fontWeight(.bold)
                         }
-                        .tint(.primary.opacity(0.8))
-                        .fontWeight(.bold)
+                        .padding(.top)
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                     }
-                    .frame(width: 100, height: 100)
-                    .background {
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(Color(.secondarySystemGroupedBackground))
-                    }
-                    .padding(.top)
-                    Spacer()
+                    .listRowBackground(Color.clear)
                     
+//                    Section {
+//                        Text(getDefaultCalendarTitle())
+//                            .foregroundColor(getDefaultCalendarTitle() == getDefaultCalendarTitle() ? .primary : .black.opacity(0.3))
+//                            .font(.body)
+//                            .onTapGesture {
+//                                showDefaultCalendarAlert.toggle()
+//                            }
+//                    } header: {
+//                        Text("Default calendar")
+//                    }
+//                    .listRowBackground(Color(.systemGray4).opacity(0.3))
+                    
+                    Section {
+                        HStack(spacing: 0) {
+                            Spacer()
+                            Text("Year")
+                                Picker("Year", selection: $selectedYear) {
+                                    ForEach(years, id: \.self) { year in
+                                        Text("\(yearFormatter.string(from: NSNumber(value: year)) ?? "\(year)")").tag(year)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Color(themeManager.currentTheme.tertiaryColor))
+                                .labelsHidden()
+                            
+                            Spacer()
+                            
+                            Text("Month")
+                                Picker("Month", selection: $selectedMonth) {
+                                    ForEach(1...12, id: \.self) { month in
+                                        Text("\(month)").tag(month)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(Color(themeManager.currentTheme.tertiaryColor))
+                                .labelsHidden()
+                            
+                            Spacer()
+                        }
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                    }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+                    
+                    Section {
+                        HStack {
+                            Spacer()
+                            Button {
+                                fetchAndPrintEventsForSelectedMonth()
+                            } label: {
+                                VStack {
+                                    Image(systemName: "square.and.arrow.up")
+                                    Text("Export")
+                                }
+                                .tint(Color(themeManager.currentTheme.tertiaryColor))
+                                .fontWeight(.bold)
+                            }
+                            .frame(width: 100, height: 100)
+                            .background {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color(themeManager.currentTheme.secondaryColor))
+                            }
+                            Spacer()
+                        }
+                    }
+                    .listRowBackground(Color.clear)
                 }
-                .padding(.horizontal)
+                
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("iOS Calendar")
+                            .font(.headline)
+                            .fontWeight(.heavy)
+                            .foregroundColor(themeManager.currentTheme.tertiaryColor)
+                    }
+                }
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(Color(themeManager.currentTheme.primaryColor), for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
+                .headerProminence(.increased)
+                .scrollContentBackground(.hidden)
+                .navigationBarBackButtonTextHidden()
+
             }
-            .onAppear {
-                confirmAuthThen {
-                    print("Calendar access check completed")
-                }
-                if !authorizationStatus() {
-                    isShowDeniedAlert.toggle()
-                }
-            }
-            .navigationTitle("Export to iOS Cal")
+            .navigationTitle("iOS Calendar")
         }
-        .fontDesign(.rounded)
-        .alert("Permission is required to access the calendar.", isPresented: $isShowDeniedAlert) {
-            Button("Close", role: .cancel) {
-                dismiss()
-            }
-            Button("Setting") {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                dismiss()
-            }
-        } message: {
-            Text("This app requires permission to access your calendar.")
-        }
-        .alert("No events found", isPresented: $showNoEventsAlert, actions: {
+        .alert("There are no events", isPresented: $showNoEventsAlert, actions: {
             Button("OK", role: .cancel) {}
         }, message: {
             Text("No events were found for the selected month.")
@@ -178,91 +171,20 @@ struct CopyingIosCalendarEvents: View {
                 registerEventsToEventKit()
             }
         }, message: {
-            Text("Do you want to export selected year and month events to iOS calendar?")
+            Text("Would you like to export the selected month's events to your iOS calendar?")
         })
-        .alert("Export successful", isPresented: $isShowExportSuccessful, actions: {
-            Button("Cancel", role: .cancel) {}
+        .alert("Export completed", isPresented: $isShowExportSuccessful, actions: {
             Button("OK") {}
         }, message: {
-            Text("Successfully exported to iOS calendar.")
+            Text("Export to iOS calendar is completed.")
         })
-        .alert("Change the default calendar", isPresented: $showDefaultCalendarAlert, actions: {
-            Button("OK") {}
-        }, message: {
-            VStack {
-                Text("Open the \"Settings app\"\n  Go to \"Apps\" → \"Calendar\"\nand you will see an item called\n\"Default Calendar\".")
-                
-            }
-            
-        })
-    }
-    
-    func confirmAuthThen(completion: @escaping () -> Void) {
-        if #available(iOS 17.0, *) {
-            eventStore.requestWriteOnlyAccessToEvents { granted, error in
-                DispatchQueue.main.async {
-                    if self.authorizationStatus() {
-                        print("already allowed")
-                        completion()
-                        return
-                    } else {
-                        eventStore.requestFullAccessToEvents { granted, error in
-                            if granted {
-                                print("allowed now")
-                                DispatchQueue.main.async {
-                                    completion()
-                                }
-                                return
-                            } else {
-                                print("Not allowed")
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            if authorizationStatus() {
-                print("already allowed")
-                completion()
-                return
-            } else {
-                eventStore.requestAccess(to: .event, completion: { granted, error in
-                    if !granted {
-                        print("allowed now")
-                        DispatchQueue.main.async {
-                            completion()
-                        }
-                        return
-                    } else {
-                        print("Not allowed")
-                    }
-                })
-            }
-        }
-    }
-    
-    func authorizationStatus() -> Bool {
-        let status = EKEventStore.authorizationStatus(for: .event)
-        switch status {
-        case .fullAccess:
-            print("Authorized")
-            return true
-        case .notDetermined:
-            print("Not determined")
-            return false
-        case .restricted:
-            print("Restricted")
-            return false
-        case .denied:
-            print("Denied")
-            return false
-        case .writeOnly:
-            print("Write only")
-            return false
-        @unknown default:
-            print("Unknown default")
-            return false
-        }
+//        .alert("Change the default calendar", isPresented: $showDefaultCalendarAlert, actions: {
+//            Button("OK") {}
+//        }, message: {
+//            VStack {
+//                Text("\"Settings app\" → \"Apps\" → \"Calendar\" → \"Default Calendar\"")
+//            }
+//        })
     }
     
     func fetchAndPrintEventsForSelectedMonth() {
@@ -311,15 +233,16 @@ struct CopyingIosCalendarEvents: View {
         }
     }
     
-    func getDefaultCalendarTitle() -> String {
-        if let defaultCalendar = eventStore.defaultCalendarForNewEvents?.title {
-            return defaultCalendar
-        } else {
-            return "No default calendar found."
-        }
-    }
+//    func getDefaultCalendarTitle() -> String {
+//        if let defaultCalendar = eventStore.defaultCalendarForNewEvents?.title {
+//            return defaultCalendar
+//        } else {
+//            return "No default calendar found."
+//        }
+//    }
 }
 
 #Preview {
     CopyingIosCalendarEvents()
+        .environmentObject(AppThemeManager())
 }

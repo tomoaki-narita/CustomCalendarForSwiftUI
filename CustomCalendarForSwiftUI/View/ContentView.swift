@@ -27,7 +27,14 @@ struct ContentView: View {
     @StateObject private var viewModel = HolidayViewModel()
     @State private var tappedDate: Date? = nil  // ロングタップされた日付
     @State private var blurEffectView: UIVisualEffectView?
+    
+    @State private var showDuplicateAlert = false
+    @State private var duplicateEventTitle: String = ""
+    @State private var duplicateEventDate: String = ""
+    @State private var duplicateEventColor: String = ""
+    
     @Environment(\.scenePhase) var scenePhase
+    @EnvironmentObject var themeManager: AppThemeManager
     
     private enum AlertType: Identifiable {
         case noDateSelected
@@ -46,7 +53,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemGroupedBackground).ignoresSafeArea()
+                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
                 VStack {
                     CalendarView(
                         currentMonth: $currentMonth,
@@ -59,8 +66,8 @@ struct ContentView: View {
                             tappedDate = date  // ロングタップされた日付を保存
                         }, viewModel: viewModel
                     )
-                    //                    .background(Color(.secondarySystemGroupedBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 25))
+//                    .background(Color(themeManager.currentTheme.secondaryColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 40))
                     .blur(radius: showEventPickerView ? 2.5 : 0)
                     .allowsHitTesting(!showEventPickerView)
                     
@@ -70,10 +77,9 @@ struct ContentView: View {
                             isReloadButton.toggle()
                             resetCalendar()
                         }) {
-                            
-                            Image(systemName: "arrow.trianglehead.2.clockwise")
-                                .foregroundStyle(Color.primary)
-                                .font(.title3).fontWeight(.bold)
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                .font(.title3)
                                 .padding()
                                 .shadow(radius: 10)
                         }
@@ -91,9 +97,10 @@ struct ContentView: View {
                             }
                             
                         }) {
-                            Image(systemName: "plus")
-                                .foregroundStyle(Color.primary)
-                                .font(.title2).fontWeight(.bold)
+                            Image(systemName: "square.stack")
+                                .rotationEffect(.degrees(90))
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                .font(.title2)
                                 .padding()
                                 .shadow(radius: 10)
                         }
@@ -102,13 +109,11 @@ struct ContentView: View {
                         
                         Spacer()
                         NavigationLink(destination: EditView()) {
-                            
-                            Image(systemName: "gearshape")
-                                .foregroundStyle(Color.primary)
-                                .font(.title3).fontWeight(.bold)
+                            Image(systemName: "square.and.pencil")
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                .font(.title3)
                                 .padding()
                                 .shadow(radius: 10)
-                            
                         }
                         Spacer()
                     }
@@ -116,10 +121,16 @@ struct ContentView: View {
                     .allowsHitTesting(!showEventPickerView) //opacityが0になるとタップできなくなるため不要だが一応残す
                     .opacity(showEventPickerView ? 0 : 1)
                 }
-                .padding()
+//                .background(Color(.systemGray4).opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 30))
+                .padding(.horizontal)
                 .sheet(item: $tappedDate) { date in
-                    EventDetailModal(date: date, eventViewModel: eventViewModel, viewModel: viewModel)
-                        .presentationDetents([.medium, .large])
+                    NavigationStack {
+                        EventDetailModal(date: date, eventViewModel: eventViewModel, viewModel: viewModel)
+                            .environmentObject(eventViewModel)
+                            .presentationDetents([.large])
+                    }
+                    
                 }
                 .onAppear {
                     eventViewModel.fetchEvents()
@@ -134,6 +145,7 @@ struct ContentView: View {
                     }
                 }
             }
+            .ignoresSafeArea(.keyboard)
         }
         .overlay {
             if showEventPickerView {
@@ -157,7 +169,7 @@ struct ContentView: View {
             isPresented: $showConfirmationDialog,
             titleVisibility: .visible
         ) {
-            Button("OK", role: .none) {
+            Button("Register", role: .none) {
                 if let event = eventToProcess {
                     processEvent(event)
                     selectedDates.removeAll() // 選択を解除
@@ -166,10 +178,14 @@ struct ContentView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Would you like to register for the date of your choice?")
+            Text("Register event to selected date.")
         }
         .alert(item: $activeAlert, content: createAlert)
-        .fontDesign(.rounded)
+        .alert("Duplicate events", isPresented: $showDuplicateAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Title: \(duplicateEventTitle)\nDate: \(duplicateEventDate) \nColor: \(duplicateEventColor)\nThis event is already registered for the selected date.")
+        }
     }
     
     private func resetCalendar() {
@@ -228,18 +244,35 @@ struct ContentView: View {
         let eventEndTime = event.eventEndDate
         
         for dateString in selectedDatesStrings {
-            guard let combinedStartDate = combineDateAndTime(dateString: dateString, timeString: eventStartTime) else {
-                print("開始日時の変換に失敗しました")
+            guard let combinedStartDate = combineDateAndTime(dateString: dateString, timeString: eventStartTime),
+                  let combinedEndDate = combineDateAndTime(dateString: dateString, timeString: eventEndTime) else {
+                print("開始日時または終了日時の変換に失敗しました")
                 continue
             }
             
-            guard let combinedEndDate = combineDateAndTime(dateString: dateString, timeString: eventEndTime) else {
-                print("終了日時の変換に失敗しました")
+            // **イベントの重複チェック（タイトル・開始・終了・色）**
+            if let duplicateEvent = eventViewModel.events.first(where: {
+                $0.eventTitle == event.eventTitle &&
+                $0.eventStartDate == combinedStartDate &&
+                $0.eventEndDate == combinedEndDate &&
+                $0.colorData == event.colorData
+            }) {
+                // **重複したイベントがある場合、アラートを表示**
+                duplicateEventTitle = duplicateEvent.eventTitle
+                duplicateEventDate = dateString
+                if let colorData = duplicateEvent.colorData,
+                   let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: colorData) {
+                    duplicateEventColor = uiColor.toHexString()
+                } else {
+                    duplicateEventColor = "Unknown Color"
+                }
+
+                showDuplicateAlert = true
+                print("⚠️ 重複イベント: \(duplicateEventTitle) - \(duplicateEventDate) (色: \(duplicateEventColor))")
                 continue
             }
             
-            print("開始日時: \(event.eventTitle) - \(combinedStartDate)")
-            print("終了日時: \(event.eventTitle) - \(combinedEndDate)")
+            print("✅ 登録: \(event.eventTitle) - \(combinedStartDate) (色: \(String(describing: event.colorData)))")
             
             let calendarEvent = CalendarEvent(
                 eventTitle: event.eventTitle,
@@ -253,19 +286,19 @@ struct ContentView: View {
             eventViewModel.addEvent(calendarEvent)
         }
     }
-    
-    func saveEventToRealm(event: CalendarEvent) {
-        do {
-            let realm = try Realm()
-            try realm.write {
-                realm.add(event)
-            }
-            print("イベントが正常に保存されました: \(event.eventTitle)")
-            resetCalendar()
-        } catch {
-            print("イベントの保存に失敗しました: \(error.localizedDescription)")
-        }
-    }
+
+//    func saveEventToRealm(event: CalendarEvent) {
+//        do {
+//            let realm = try Realm()
+//            try realm.write {
+//                realm.add(event)
+//            }
+//            print("イベントが正常に保存されました: \(event.eventTitle)")
+//            resetCalendar()
+//        } catch {
+//            print("イベントの保存に失敗しました: \(error.localizedDescription)")
+//        }
+//    }
     
     private func fetchAndPrintSavedEvents() {
         do {
@@ -347,6 +380,65 @@ extension Date: @retroactive Identifiable {
     }
 }
 
+extension UIColor {
+    func toHexString() -> String {
+        guard let components = cgColor.components, components.count >= 3 else {
+            return "#000000" // 黒をデフォルト
+        }
+        
+        let r = Int(components[0] * 255)
+        let g = Int(components[1] * 255)
+        let b = Int(components[2] * 255)
+        
+        return String(format: "#%02X%02X%02X", r, g, b)
+    }
+}
+
+extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return viewControllers.count > 1
+    }
+}
+
+
+
+
+
+
+
+
+struct NavigationBarBackButtonTextHidden: ViewModifier {
+  @Environment(\.presentationMode) var presentaion
+  @EnvironmentObject var themeManager: AppThemeManager
+    
+  func body(content: Content) -> some View {
+    content
+      .navigationBarBackButtonHidden(true)
+      .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button(action: { presentaion.wrappedValue.dismiss() }) {
+            Image(systemName: "chevron.backward")
+                  .font(.footnote.bold())
+                  .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+          }
+        }
+      }
+  }
+}
+
+extension View {
+  func navigationBarBackButtonTextHidden() -> some View {
+    return self.modifier(NavigationBarBackButtonTextHidden())
+  }
+}
+
+
 #Preview {
     ContentView()
+        .environmentObject(AppThemeManager())
 }

@@ -20,10 +20,15 @@
 		E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DB2D1E470200027E22 /* CalendarView.swift */; };
 		E78380DE2D1E474F00027E22 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DD2D1E474F00027E22 /* EditView.swift */; };
 		E78ECB332D47795000982171 /* Holiday.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ECB322D47793D00982171 /* Holiday.swift */; };
+		E7904E022D5CC0740043FE86 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7904E012D5CC05D0043FE86 /* UserSettings.swift */; };
+		E7904E042D5CC10F0043FE86 /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */; };
 		E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */; };
 		E7CCD58B2D43B261009E98BD /* EventDetailModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */; };
 		E7D52E4C2D4B5A0F002BE578 /* FetchCalendarEventsIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D52E4B2D4B5A04002BE578 /* FetchCalendarEventsIntent.swift */; };
 		E7D52E4E2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D52E4D2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift */; };
+		E7F3AC802D58BDD600260A34 /* CreateNewEventViewForEventDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F3AC7F2D58BDCE00260A34 /* CreateNewEventViewForEventDate.swift */; };
+		E7F3AC822D58BEE000260A34 /* CreateNewEventViewForCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F3AC812D58BED400260A34 /* CreateNewEventViewForCalendarEvent.swift */; };
+		E7FCC8CB2D53623A0030A265 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E7FCC8CA2D53623A0030A265 /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -54,10 +59,15 @@
 		E78380DB2D1E470200027E22 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		E78380DD2D1E474F00027E22 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		E78ECB322D47793D00982171 /* Holiday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holiday.swift; sourceTree = "<group>"; };
+		E7904E012D5CC05D0043FE86 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
 		E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPickerView.swift; sourceTree = "<group>"; };
 		E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailModal.swift; sourceTree = "<group>"; };
 		E7D52E4B2D4B5A04002BE578 /* FetchCalendarEventsIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchCalendarEventsIntent.swift; sourceTree = "<group>"; };
 		E7D52E4D2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyingIosCalendarEvents.swift; sourceTree = "<group>"; };
+		E7F3AC7F2D58BDCE00260A34 /* CreateNewEventViewForEventDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewEventViewForEventDate.swift; sourceTree = "<group>"; };
+		E7F3AC812D58BED400260A34 /* CreateNewEventViewForCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewEventViewForCalendarEvent.swift; sourceTree = "<group>"; };
+		E7FCC8CA2D53623A0030A265 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,10 +112,10 @@
 				E768E2FD2D5245060004BBD0 /* Fonts */,
 				E7CCD58D2D43B2A3009E98BD /* Model */,
 				E7CCD58C2D43B29C009E98BD /* View */,
-				E78380C72D1E41EA00027E22 /* ContentView.swift */,
 				E712076D2D37D399004A5291 /* CustomCalendarForSwiftUI.entitlements */,
 				E78380C52D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift */,
 				E78380C92D1E41EF00027E22 /* Assets.xcassets */,
+				E7FCC8CA2D53623A0030A265 /* Localizable.xcstrings */,
 				E78380CB2D1E41EF00027E22 /* Preview Content */,
 			);
 			path = CustomCalendarForSwiftUI;
@@ -122,6 +132,8 @@
 		E7CCD58C2D43B29C009E98BD /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E7F3AC812D58BED400260A34 /* CreateNewEventViewForCalendarEvent.swift */,
+				E7F3AC7F2D58BDCE00260A34 /* CreateNewEventViewForEventDate.swift */,
 				E78380DB2D1E470200027E22 /* CalendarView.swift */,
 				E78380DD2D1E474F00027E22 /* EditView.swift */,
 				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
@@ -129,6 +141,8 @@
 				E745185D2D48E3BF009AC781 /* BackupView.swift */,
 				E7D52E4D2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift */,
 				E768E3032D52540C0004BBD0 /* SplashView.swift */,
+				E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */,
+				E78380C72D1E41EA00027E22 /* ContentView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -139,6 +153,7 @@
 				E7D52E4B2D4B5A04002BE578 /* FetchCalendarEventsIntent.swift */,
 				E71207312D216965004A5291 /* EventDate.swift */,
 				E78ECB322D47793D00982171 /* Holiday.swift */,
+				E7904E012D5CC05D0043FE86 /* UserSettings.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -175,7 +190,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					E78380C12D1E41EA00027E22 = {
 						CreatedOnToolsVersion = 15.2;
@@ -189,6 +204,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = E78380B92D1E41EA00027E22;
 			packageReferences = (
@@ -210,6 +226,7 @@
 			files = (
 				E768E2FF2D5245390004BBD0 /* Pacifico-Regular.ttf in Resources */,
 				E78380CD2D1E41EF00027E22 /* Preview Assets.xcassets in Resources */,
+				E7FCC8CB2D53623A0030A265 /* Localizable.xcstrings in Resources */,
 				E78380CA2D1E41EF00027E22 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -223,8 +240,12 @@
 			files = (
 				E78380C82D1E41EA00027E22 /* ContentView.swift in Sources */,
 				E7C1AAF42D2D59C4000300F3 /* EventPickerView.swift in Sources */,
+				E7F3AC802D58BDD600260A34 /* CreateNewEventViewForEventDate.swift in Sources */,
 				E78ECB332D47795000982171 /* Holiday.swift in Sources */,
 				E71207322D216965004A5291 /* EventDate.swift in Sources */,
+				E7F3AC822D58BEE000260A34 /* CreateNewEventViewForCalendarEvent.swift in Sources */,
+				E7904E022D5CC0740043FE86 /* UserSettings.swift in Sources */,
+				E7904E042D5CC10F0043FE86 /* ThemeSelectionView.swift in Sources */,
 				E7D52E4E2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift in Sources */,
 				E78380C62D1E41EA00027E22 /* CustomCalendarForSwiftUIApp.swift in Sources */,
 				E78380DE2D1E474F00027E22 /* EditView.swift in Sources */,
@@ -244,6 +265,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -298,6 +320,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -307,6 +330,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -354,6 +378,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -371,14 +396,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CustomCalendarForSwiftUI/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "<key>NSPrivacy - Camera Usage Description</key>";
+				INFOPLIST_KEY_CFBundleDisplayName = Local;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access to iOS Calendar is required to register events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -388,10 +413,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = net.unwraps.output.CustomCalendarForSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -408,14 +434,14 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CustomCalendarForSwiftUI/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "<key>NSPrivacy - Camera Usage Description</key>";
+				INFOPLIST_KEY_CFBundleDisplayName = Local;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access to iOS Calendar is required to register events.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -425,10 +451,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = net.unwraps.output.CustomCalendarForSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

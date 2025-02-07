@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SplashView: View {
-    
+    @EnvironmentObject var themeManager: AppThemeManager
     @State private var isVisible: Bool = false
     @State private var trigger: Bool = false
     @State private var isActive = false
@@ -16,15 +16,23 @@ struct SplashView: View {
     var body: some View {
         if isActive {
             ContentView()
+                .environmentObject(themeManager)
         } else {
             VStack(spacing: 0) {
                 Image("appIconImage")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 120, height: 120)
+                    .frame(width: 100, height: 100)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
-                SplashScreenView(" MiniCal ", trigger: glitctTrigger())
-                    .font(.custom("Pacifico-Regular", size: 50))
+                
+                HStack {
+                    SplashScreenView(" Local ", trigger: glitctTrigger())
+                        .font(.custom("Pacifico-Regular", size: 40))
+                    SplashScreenView("calendar", trigger: glitctTrigger())
+                        .font(.custom("Pacifico-Regular", size: 30))
+                        .baselineOffset(-8)
+                }
+                
                 
             }
             .opacity(isVisible ? 1 : 0)
@@ -59,7 +67,7 @@ struct SplashView: View {
                 )
             }
             
-            SplashScreen(text: " MiniCal ", trigger: trigger, shadow: .green) {
+            SplashScreen(text: text, trigger: trigger, shadow: .green) {
                 LinearKeyframe(SplashScreenFrame(top: 0, center: 5, bottom: 0, shadowOpacity: 0.2), duration: 0.1
                 )
                 LinearKeyframe(SplashScreenFrame(top: 5, center: 5, bottom: 5, shadowOpacity: 0.3), duration: 0.1
@@ -86,6 +94,8 @@ struct SplashView: View {
 }
 
 struct SplashScreen: View {
+    
+    @EnvironmentObject var themeManager: AppThemeManager
     var text: String
     var trigger: Bool
     var shadow: Color
@@ -119,8 +129,6 @@ struct SplashScreen: View {
     @ViewBuilder
     func TextView(_ alignment: Alignment, offset: CGFloat, opacity: CGFloat) -> some View {
         Text(text)
-            
-            
             .mask {
                 if alignment == .top {
                     VStack(spacing: 0) {
@@ -181,4 +189,5 @@ struct SplashScreenFrame: Animatable {
 
 #Preview {
     SplashView()
+        .environmentObject(AppThemeManager())
 }
