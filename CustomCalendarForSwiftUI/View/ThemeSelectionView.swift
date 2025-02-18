@@ -16,7 +16,7 @@ struct ThemeSelectionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 ScrollView {
                     VStack {
                         LazyVGrid(columns: columns) {
@@ -33,7 +33,11 @@ struct ThemeSelectionView: View {
                                                 .frame(width: iconSize * 1.15, height: iconSize * 1.15)
                                                 .shadow(radius: 5)
                                             RoundedRectangle(cornerRadius: 10)
-                                                .fill(theme.primaryColor)
+//                                                .fill(theme.primaryColor)
+                                                .fill(
+                                                    LinearGradient(gradient: Gradient(stops: [.init(color: theme.primaryColor, location: 0.0), .init(color: theme.gradientColor, location: 0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                                )
+                                            
                                                 .frame(width: iconSize, height: iconSize)
                                             VStack {
                                                 Text("123")
@@ -44,7 +48,7 @@ struct ThemeSelectionView: View {
                                         .padding(10)
                                         .background(
                                             RoundedRectangle(cornerRadius: 20)
-                                                .fill(themeManager.currentTheme == theme ? Color.gray.opacity(0.3) : Color.clear)
+                                                .fill(themeManager.currentTheme == theme ? Color.black.opacity(0.2) : Color.clear)
                                         )
                                     }
                                     Text("\(theme)")

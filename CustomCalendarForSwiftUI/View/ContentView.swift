@@ -53,7 +53,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+//                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 VStack {
                     CalendarView(
                         currentMonth: $currentMonth,
@@ -110,6 +111,14 @@ struct ContentView: View {
                         Spacer()
                         NavigationLink(destination: EditView()) {
                             Image(systemName: "square.and.pencil")
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                .font(.title3)
+                                .padding()
+                                .shadow(radius: 10)
+                        }
+                        Spacer()
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "gearshape")
                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                 .font(.title3)
                                 .padding()

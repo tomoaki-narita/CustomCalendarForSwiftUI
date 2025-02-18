@@ -587,6 +587,9 @@
         }
       }
     },
+    "Settings" : {
+
+    },
     "Settings App" : {
       "localizations" : {
         "ja" : {

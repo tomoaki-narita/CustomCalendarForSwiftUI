@@ -31,8 +31,6 @@ struct EventPickerView: View {
                 let size = $0.size
                 let padding = (size.width - buttonSize) / 2
                 VStack(spacing: 0) {
-                    
-                    
                     ScrollView(.horizontal) {
                         HStack(spacing: 30) {
                             ForEach(events) { event in

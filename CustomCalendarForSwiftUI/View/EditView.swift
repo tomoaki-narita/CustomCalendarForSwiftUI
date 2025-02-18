@@ -9,30 +9,44 @@ import SwiftUI
 import RealmSwift
 import EventKit
 
-enum NavigationDestination: Hashable {
-    case copyEvents
-}
-
 struct EditView: View {
     @EnvironmentObject var themeManager: AppThemeManager
     @State var isEditViewVisible: Bool = false
     @State var editingEvent: EventDate? = nil
-    @State var eventListIsExpanded: Bool = false
-    @State private var isShowDeniedAlert = false
-    @State private var isAuthorized = false
+    @State var eventListIsExpanded: Bool = true
     @ObservedResults(EventDate.self, sortDescriptor: SortDescriptor(keyPath: "sortOrder", ascending: true)) var events
-    private let eventStore = EKEventStore()
     let plusImage: Image = Image(systemName: "plus")
-//    let starImage: Image = Image(systemName: "star.fill")
     let clockImage: Image = Image(systemName: "clock")
     let memoImage: Image = Image(systemName: "note.text")
     
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
-                    Section(isExpanded: $eventListIsExpanded, content: {
+                    Section {
+                        HStack {
+                            Spacer()
+                            Button {
+                                isEditViewVisible = true
+                                editingEvent = nil // 新規作成モード
+                            } label: {
+                                Text("\(plusImage) New event")
+                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            }
+                            
+                            .sheet(isPresented: $isEditViewVisible) {
+                                CreateNewEventViewForEventDate(
+                                    editingEvent: $editingEvent,
+                                    selectedColor: .primary
+                                )
+                            }
+                            Spacer()
+                        }
+                    }
+                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+                    
+                    Section(isExpanded: $eventListIsExpanded) {
                         ForEach(events, id: \.id) { event in
                             HStack {
                                 Circle()
@@ -76,99 +90,27 @@ struct EditView: View {
                             $events.remove(atOffsets: index)
                         })
                         .onMove(perform: moveEvent)
-                    }, header: {
+                    } header: {
                         HStack {
                             Image(systemName: "square.and.pencil")
                                 .font(.headline)
                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                             Text("Event template")
                                 .fontWeight(.semibold)
-                                .font(.title2)
+                                .font(.headline)
                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                         }
-                    })
+                    }
                     .frame(minHeight:40)
                     .tint(Color(themeManager.currentTheme.tertiaryColor))
                     .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
 
-                    Section {
-                        HStack {
-                            Spacer()
-                            Button {
-                                isEditViewVisible = true
-                                editingEvent = nil // 新規作成モード
-                            } label: {
-                                Text("\(plusImage) New event")
-                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                            }
-                            
-                            .sheet(isPresented: $isEditViewVisible) {
-                                CreateNewEventViewForEventDate(
-                                    editingEvent: $editingEvent,
-                                    selectedColor: .primary
-                                )
-                            }
-                            Spacer()
-                        }
-                    }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+//                    Section {
+//                        Text("")
+//                    }
+//                    .frame(minHeight:40)
+//                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                     
-                    Section {
-                        NavigationLink("\(themeManager.currentTheme)", destination: ThemeSelectionView())
-                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                            .textCase(.uppercase)
-                    } header: {
-                        Text("Theme")
-                            .fontWeight(.semibold)
-                            .font(.title2)
-                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                    }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
-                    
-                    Section {
-                        NavigationLink("Export and Import", destination: BackupView())
-                            .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                            
-                    } header: {
-                        HStack {
-                            Image(systemName: "arrow.up.arrow.down")
-                                .font(.headline)
-                            Text("Backup")
-                                .fontWeight(.semibold)
-                                .font(.title2)
-                        }
-                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                    }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
-                    
-                    Section {
-                        if isAuthorized {
-                            NavigationLink("Export to iOS calendar", destination: CopyingIosCalendarEvents())
-                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                        } else {
-                            HStack {
-                                Button("No access rights") {
-                                    requestCalendarAccess()
-                                }
-                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
-                                Spacer()
-                                Image(systemName: "gear")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                            }
-                        }
-                    } header: {
-                        HStack {
-                            Image(systemName: "arrow.up")
-                                .font(.headline)
-                            Text("iOS Calendar")
-                                .fontWeight(.semibold)
-                                .font(.title2)
-                        }
-                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                    }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                 }
                 .scrollContentBackground(.hidden)
                 .toolbar {
@@ -192,17 +134,8 @@ struct EditView: View {
                 
             }
         }
-        .alert("Permission is required to access the calendar.", isPresented: $isShowDeniedAlert) {
-            Button("Close", role: .cancel) {}
-            Button("Settings App") {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            }
-        } message: {
-            Text("This app requires permission to access your calendar.")
-        }
-        .onAppear {
-            isAuthorized = authorizationStatus()
-        }
+        
+        
     }
     
     func moveEvent(from source: IndexSet, to destination: Int) {
@@ -240,42 +173,7 @@ struct EditView: View {
         return outputFormatter.string(from: date)
     }
     
-    func requestCalendarAccess() {
-            if #available(iOS 17.0, *) {
-                eventStore.requestWriteOnlyAccessToEvents { granted, error in
-                    DispatchQueue.main.async {
-                        if granted || self.authorizationStatus() {
-                            isAuthorized = true // 許可が取れたら NavigationLink に変更
-                        } else {
-                            eventStore.requestFullAccessToEvents { granted, error in
-                                DispatchQueue.main.async {
-                                    if granted {
-                                        isAuthorized = true
-                                    } else {
-                                        isShowDeniedAlert = true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                eventStore.requestAccess(to: .event) { granted, error in
-                    DispatchQueue.main.async {
-                        if granted {
-                            isAuthorized = true
-                        } else {
-                            isShowDeniedAlert = true
-                        }
-                    }
-                }
-            }
-        }
-
-        func authorizationStatus() -> Bool {
-            let status = EKEventStore.authorizationStatus(for: .event)
-            return status == .fullAccess || status == .writeOnly
-        }
+    
 }
 
 

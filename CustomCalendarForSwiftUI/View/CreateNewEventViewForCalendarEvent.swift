@@ -56,7 +56,7 @@ struct CreateNewEventViewForCalendarEvent: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
                     Section {
                         HStack(alignment: .center) {
@@ -77,7 +77,6 @@ struct CreateNewEventViewForCalendarEvent: View {
                             .padding(.leading)
                             
                             Button {
-                                focusdFieldForEventTitleTextField = nil
                                 eventTitle = ""
                             } label: {
                                 Image(systemName: "delete.left")
@@ -143,7 +142,6 @@ struct CreateNewEventViewForCalendarEvent: View {
                             .padding(.leading)
                             
                             Button {
-                                focusdFieldForEventMemoTextField = nil
                                 eventMemo = ""
                             } label: {
                                 Image(systemName: "delete.left")
@@ -173,14 +171,25 @@ struct CreateNewEventViewForCalendarEvent: View {
                         HStack {
                             Spacer()
                             Button(editingEvent == nil ? "Add" : "Save") {
+                                focusdFieldForEventMemoTextField = nil
+                                focusdFieldForEventTitleTextField = nil
                                 handleSaveButtonTapped()
                             }
                             .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            .font(.footnote)
+                            .padding(8)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color(themeManager.currentTheme.tertiaryColor), lineWidth: 0.8)
+                            )
+                            .buttonStyle(.plain)
                             Spacer()
                         }
                     }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+                    .listRowBackground(Color.clear)
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
                 .toolbar {
@@ -228,6 +237,10 @@ struct CreateNewEventViewForCalendarEvent: View {
                 }
                 .alert(item: $activeAlert, content: createAlert)
             }
+//            .onTapGesture {
+//                focusdFieldForEventMemoTextField = nil
+//                focusdFieldForEventTitleTextField = nil
+//            }
         }
     }
     
@@ -259,7 +272,17 @@ struct CreateNewEventViewForCalendarEvent: View {
             $0.id != (editingEvent?.id ?? "") // 自身を除外
         }
 
-        if duplicateEvent != nil {
+        if let duplicateEvent = duplicateEvent {
+            // 既存イベントとメモだけが異なる場合は更新を許可
+            if duplicateEvent.eventMemo != eventMemo {
+                try? realm.write {
+                    duplicateEvent.eventMemo = eventMemo
+                }
+                eventViewModel.fetchEvents()
+                dismiss()
+                return
+            }
+
             activeAlert = .custom(String(localized: "This event has already been registered."))
             return
         }
@@ -330,7 +353,7 @@ struct CreateNewEventViewForCalendarEvent: View {
     }
     
     private func currentThemeDatePickerColorScheme() -> Bool {
-        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue {
+        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGradient {
             return true
         } else if themeManager.currentTheme == .system && colorScheme == .dark {
             return true

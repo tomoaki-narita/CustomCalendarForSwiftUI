@@ -9,7 +9,7 @@ import SwiftUI
 import RealmSwift
 
 enum AppColorTheme: String, CaseIterable, Identifiable {
-    case dark, light, red, orange, yellow, green, blue, purple, pink, brown, gray, darkXpurple, system
+    case dark, light, red, orange, yellow, green, blue, purple, pink, brown, gray, darkXpurple, system, blueGradient
 
     var id: String { self.rawValue }
 
@@ -28,6 +28,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GrayPrimary")
         case .darkXpurple: return Color("DarkXPurplePrimary")
         case .system: return Color("SystemPrimary")
+        case .blueGradient: return Color("BluePrimary")
         }
     }
 
@@ -46,6 +47,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GraySecondary")
         case .darkXpurple: return Color("DarkXPurpleSecondary")
         case .system: return Color("SystemSecondary")
+        case .blueGradient: return Color("GrayOpacity")
         }
     }
     
@@ -64,6 +66,26 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GrayTertiary")
         case .darkXpurple: return Color("DarkXPurpleTertiary")
         case .system: return Color("SystemTertiary")
+        case .blueGradient: return Color("BlueTertiary")
+        }
+    }
+    
+    var gradientColor: Color {
+        switch self {
+        case .dark: return Color("DarkPrimary")
+        case .light: return Color("LightPrimary")
+        case .red: return Color("RedPrimary")
+        case .orange: return Color("OrangePrimary")
+        case .yellow: return Color("YellowPrimary")
+        case .green: return Color("GreenPrimary")
+        case .blue: return Color("BluePrimary")
+        case .purple: return Color("PurplePrimary")
+        case .pink: return Color("PinkPrimary")
+        case .brown: return Color("BrownPrimary")
+        case .gray: return Color("GrayPrimary")
+        case .darkXpurple: return Color("DarkXPurplePrimary")
+        case .system: return Color("SystemPrimary")
+        case .blueGradient: return Color("PurplePrimary")
         }
     }
 }

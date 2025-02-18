@@ -19,6 +19,7 @@
 		E78380DA2D1E450A00027E22 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = E78380D62D1E42B200027E22 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E78380DC2D1E470200027E22 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DB2D1E470200027E22 /* CalendarView.swift */; };
 		E78380DE2D1E474F00027E22 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78380DD2D1E474F00027E22 /* EditView.swift */; };
+		E78D12262D635B77004C296C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78D12252D635B77004C296C /* SettingsView.swift */; };
 		E78ECB332D47795000982171 /* Holiday.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78ECB322D47793D00982171 /* Holiday.swift */; };
 		E7904E022D5CC0740043FE86 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7904E012D5CC05D0043FE86 /* UserSettings.swift */; };
 		E7904E042D5CC10F0043FE86 /* ThemeSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */; };
@@ -58,6 +59,7 @@
 		E78380CC2D1E41EF00027E22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E78380DB2D1E470200027E22 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		E78380DD2D1E474F00027E22 /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		E78D12252D635B77004C296C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E78ECB322D47793D00982171 /* Holiday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holiday.swift; sourceTree = "<group>"; };
 		E7904E012D5CC05D0043FE86 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectionView.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				E7C1AAF32D2D59C4000300F3 /* EventPickerView.swift */,
 				E7CCD58A2D43B25B009E98BD /* EventDetailModal.swift */,
 				E745185D2D48E3BF009AC781 /* BackupView.swift */,
+				E78D12252D635B77004C296C /* SettingsView.swift */,
 				E7D52E4D2D4B76B8002BE578 /* CopyingIosCalendarEvents.swift */,
 				E768E3032D52540C0004BBD0 /* SplashView.swift */,
 				E7904E032D5CC10F0043FE86 /* ThemeSelectionView.swift */,
@@ -243,6 +246,7 @@
 				E7F3AC802D58BDD600260A34 /* CreateNewEventViewForEventDate.swift in Sources */,
 				E78ECB332D47795000982171 /* Holiday.swift in Sources */,
 				E71207322D216965004A5291 /* EventDate.swift in Sources */,
+				E78D12262D635B77004C296C /* SettingsView.swift in Sources */,
 				E7F3AC822D58BEE000260A34 /* CreateNewEventViewForCalendarEvent.swift in Sources */,
 				E7904E022D5CC0740043FE86 /* UserSettings.swift in Sources */,
 				E7904E042D5CC10F0043FE86 /* ThemeSelectionView.swift in Sources */,

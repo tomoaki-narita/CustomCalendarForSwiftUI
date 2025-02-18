@@ -44,7 +44,7 @@ struct CopyingIosCalendarEvents: View {
         
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
                     Section {
                         VStack(alignment: .leading, spacing: 5) {

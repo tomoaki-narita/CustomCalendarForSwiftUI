@@ -21,7 +21,7 @@ struct EventDetailModal: View {
     @State private var expandedEventIDs: Set<String> = []
     @State private var editingEventID: String? = nil
     @State private var tempMemo: String = ""
-    @State private var isMemoSavedSuccess: Bool = true
+    @State private var isMemoSavedSuccess: Bool = false
     @StateObject private var keyboardResponder = KeyboardResponder()
     
     @State var isEditViewVisible: Bool = false
@@ -35,7 +35,7 @@ struct EventDetailModal: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 VStack {
                     List {
                         let holidayName = getHolidayName(for: date)
@@ -84,7 +84,9 @@ struct EventDetailModal: View {
                                             }
                                         )
                                     ){
-                                        HStack(alignment: .top) {
+                                        
+                                        
+                                        HStack() {
                                             memoImage.font(.footnote)
                                                 .padding(.top, 4)
                                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
@@ -110,27 +112,23 @@ struct EventDetailModal: View {
                                                 ), axis: .vertical)
                                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                             }
+                                            
+                                            Button {
+                                                saveMemoToRealm(eventID: event.id, newMemo: tempMemo)
+                                                editingEventID = nil  // 編集終了
+                                                hideKeyboard()
+                                            } label: {
+                                                Image(systemName: isMemoSavedSuccess ? "checkmark.circle" : "circle")
+                                                    .foregroundStyle(isMemoSavedSuccess ? Color.accentColor : Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
+                                                    .font(.footnote)
+                                                    .fontWeight(.bold)
+                                            }
+                                            .buttonStyle(.plain)
+                                            .frame(alignment: .trailing)
+//                                            .opacity(isExpanded && keyboardResponder.isKeyboardVisible && editingEventID == event.id ? 1 : 0)
+                                            
                                         }
                                         .frame(minHeight: 40)
-                                        
-                                        // 各イベントごとのsaveボタンを表示
-                                        if isExpanded && keyboardResponder.isKeyboardVisible && editingEventID == event.id {
-                                            HStack {
-                                                Spacer()
-                                                Button {
-                                                    saveMemoToRealm(eventID: event.id, newMemo: tempMemo)
-                                                    editingEventID = nil  // 編集終了
-                                                    hideKeyboard()
-                                                } label: {
-                                                    Image(systemName: "checkmark")
-                                                        .foregroundStyle(isMemoSavedSuccess ? Color.accentColor : Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
-                                                        .font(.caption)
-                                                        .fontWeight(.bold)
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                            .listRowSeparator(.hidden)
-                                        }
                                     } label: {
                                         HStack {
                                             RoundedRectangle(cornerRadius: 10, style: .circular)
@@ -195,10 +193,6 @@ struct EventDetailModal: View {
                                 }
                                 .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                             }
-                            
-                            
-                            
-                            
                         }
                         
                         Section {
@@ -231,6 +225,7 @@ struct EventDetailModal: View {
                         }
                         .listRowBackground(Color.clear)
                     }
+                    .scrollDismissesKeyboard(.interactively)
                     .animation(.default, value: isDeleteAlertPresented)
                     .headerProminence(.increased)
                 }

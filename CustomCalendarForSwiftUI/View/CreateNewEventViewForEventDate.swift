@@ -52,10 +52,11 @@ struct CreateNewEventViewForEventDate: View {
         }
     }
     
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
+                LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
                     Section {
                         HStack {
@@ -77,7 +78,6 @@ struct CreateNewEventViewForEventDate: View {
                             .padding(.leading)
                             
                             Button {
-                                focusdFieldForEventTitleTextField = nil
                                 eventTitle = ""
                             } label: {
                                 Image(systemName: "delete.left")
@@ -100,7 +100,7 @@ struct CreateNewEventViewForEventDate: View {
                                 .frame(minHeight: 40)
                         }
                         .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                        
+
                         HStack {
                             clockImage.font(.footnote)
                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
@@ -141,7 +141,6 @@ struct CreateNewEventViewForEventDate: View {
                             .padding(.leading)
                             
                             Button {
-                                focusdFieldForEventMemoTextField = nil
                                 eventMemo = ""
                             } label: {
                                 Image(systemName: "delete.left")
@@ -166,20 +165,32 @@ struct CreateNewEventViewForEventDate: View {
                         .frame(minHeight: 40)
                     }
                     .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+
                     
                     Section {
                         HStack {
                             Spacer()
                             Button(editingEvent == nil ? "Add" : "Save") {
+                                focusdFieldForEventMemoTextField = nil
+                                focusdFieldForEventTitleTextField = nil
                                 handleSaveButtonTapped()
                             }
                             .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                            .font(.footnote)
+                            .padding(8)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(Color(themeManager.currentTheme.tertiaryColor), lineWidth: 0.8)
+                            )
+                            .buttonStyle(.plain)
                             Spacer()
                         }
                         
                     }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+                    .listRowBackground(Color.clear)
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
                 .toolbar {
@@ -190,9 +201,6 @@ struct CreateNewEventViewForEventDate: View {
                             .foregroundColor(themeManager.currentTheme.tertiaryColor)
                     }
                 }
-                .toolbarBackground(.visible, for: .navigationBar)
-                .toolbarBackground(Color(themeManager.currentTheme.primaryColor), for: .navigationBar)
-                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     Button {
                         dismiss()
@@ -209,6 +217,10 @@ struct CreateNewEventViewForEventDate: View {
                             )
                     }
                 }
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(Color(themeManager.currentTheme.primaryColor), for: .navigationBar)
+                .navigationBarTitleDisplayMode(.inline)
+                
                 .onAppear {
                     if let editingEvent = editingEvent {
                         eventTitle = editingEvent.eventTitle
@@ -221,6 +233,10 @@ struct CreateNewEventViewForEventDate: View {
                 }
                 .alert(item: $activeAlert, content: createAlert)
             }
+//            .onTapGesture {
+//                focusdFieldForEventMemoTextField = nil
+//                focusdFieldForEventTitleTextField = nil
+//            }
         }
     }
     
@@ -335,7 +351,7 @@ struct CreateNewEventViewForEventDate: View {
     }
     
     private func currentThemeDatePickerColorScheme() -> Bool {
-        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue {
+        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGradient {
             return true
         } else if themeManager.currentTheme == .system && colorScheme == .dark {
             return true
