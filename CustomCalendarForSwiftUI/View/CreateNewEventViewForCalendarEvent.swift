@@ -274,8 +274,6 @@ struct CreateNewEventViewForCalendarEvent: View {
             $0.allDay == allDayToggle // すべて一致する場合のみ重複とみなす
         }
 
-
-
         if duplicateEvent != nil {
             activeAlert = .custom(String(localized: "This event has already been registered."))
             return
