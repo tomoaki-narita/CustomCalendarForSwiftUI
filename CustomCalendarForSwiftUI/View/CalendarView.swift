@@ -314,11 +314,11 @@ struct DayView: View {
                         // 現在の日付のテキスト色をaccentColorに変更
                             .frame(width: geometry.size.width, height: geometry.size.height) // Textを中央に配置
                             .multilineTextAlignment(.center)
-                            .background(
-                                Circle()
-                                    .fill(isSelected(date) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
-                                    .frame(maxWidth: geometry.size.width * 0.7)
-                            )
+//                            .background(
+//                                Circle()
+//                                    .fill(isSelected(date) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
+//                                    .frame(maxWidth: geometry.size.width * 0.7)
+//                            )
                             
                     }
                     
@@ -350,23 +350,27 @@ struct DayView: View {
                             .padding(.horizontal, 1)
                         }
                     }
-                    .frame(height: eventTitleHeight, alignment: .top)
+                    .frame(height: eventTitleHeight * 1.8, alignment: .top)
                 } else {
                     Text("")
                         .font(.footnote)
                         .foregroundStyle(Color.clear)
                         .multilineTextAlignment(.center)
-                        .frame(height: eventTitleHeight)
+                        .frame(height: eventTitleHeight * 1.8)
                 }
             }
         }
         .frame(height: cellHeight)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(isSelected(date ?? Date()) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
+        )
+        .padding(1)
         .onLongPressGesture {
             if let date = date {
                 onLongTap(date) // ロングタップされた日付を渡す
             }
         }
-//        .fontDesign(.rounded)
     }
     
     private func getDateColor(for date: Date) -> Color {

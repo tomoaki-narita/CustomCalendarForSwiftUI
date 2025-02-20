@@ -255,17 +255,19 @@ struct CreateNewEventViewForEventDate: View {
         let endDateStr = dateToString(eventEndDate)
         let colorData = encodeColorToData(selectedColor)
         
-        // 重複チェック
+        // 重複チェック（すべての項目が完全一致する場合のみエラー）
         let duplicateEvent = events.first {
             $0.eventTitle == eventTitle &&
             $0.eventStartDate == startDateStr &&
             $0.eventEndDate == endDateStr &&
-            $0.colorData == colorData &&  // Data のまま比較
+            $0.eventMemo == eventMemo &&  // メモも含める
+            $0.allDay == allDayToggle &&  // allDay も含める
+            $0.colorData == colorData &&  // 色も含める
             $0.id != (editingEvent?.id ?? "") // 自身を除外
         }
         
         if duplicateEvent != nil {
-            activeAlert = .custom("This event already exists.")
+            activeAlert = .custom("This template has already been saved.")
             return
         }
         
@@ -314,6 +316,7 @@ struct CreateNewEventViewForEventDate: View {
         dismiss()
     }
 
+
     
     func encodeColorToData(_ color: Color) -> Data? {
         let uiColor = UIColor(color)
@@ -351,7 +354,7 @@ struct CreateNewEventViewForEventDate: View {
     }
     
     private func currentThemeDatePickerColorScheme() -> Bool {
-        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGradient {
+        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGrad {
             return true
         } else if themeManager.currentTheme == .system && colorScheme == .dark {
             return true

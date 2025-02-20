@@ -9,7 +9,7 @@ import SwiftUI
 import RealmSwift
 
 enum AppColorTheme: String, CaseIterable, Identifiable {
-    case dark, light, red, orange, yellow, green, blue, purple, pink, brown, gray, darkXpurple, system, blueGradient
+    case system, dark, light, red, orange, yellow, green, blue, purple, pink, brown, gray, darkXpurple, blueGrad
 
     var id: String { self.rawValue }
 
@@ -28,7 +28,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GrayPrimary")
         case .darkXpurple: return Color("DarkXPurplePrimary")
         case .system: return Color("SystemPrimary")
-        case .blueGradient: return Color("BluePrimary")
+        case .blueGrad: return Color("BluePrimary")
         }
     }
 
@@ -47,7 +47,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GraySecondary")
         case .darkXpurple: return Color("DarkXPurpleSecondary")
         case .system: return Color("SystemSecondary")
-        case .blueGradient: return Color("GrayOpacity")
+        case .blueGrad: return Color("GrayOpacity")
         }
     }
     
@@ -66,7 +66,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GrayTertiary")
         case .darkXpurple: return Color("DarkXPurpleTertiary")
         case .system: return Color("SystemTertiary")
-        case .blueGradient: return Color("BlueTertiary")
+        case .blueGrad: return Color("BlueTertiary")
         }
     }
     
@@ -85,7 +85,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .gray: return Color("GrayPrimary")
         case .darkXpurple: return Color("DarkXPurplePrimary")
         case .system: return Color("SystemPrimary")
-        case .blueGradient: return Color("PurplePrimary")
+        case .blueGrad: return Color("PurplePrimary")
         }
     }
 }
@@ -129,8 +129,6 @@ class UserSettings: Object {
             return newSettings
         }
     }
-
-
 
     static func updateTheme(_ theme: AppColorTheme) {
         let realm = try! Realm()

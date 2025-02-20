@@ -20,17 +20,15 @@ struct EventDetailModal: View {
     @State private var eventToEdit: CalendarEvent? = nil
     @State private var expandedEventIDs: Set<String> = []
     @State private var editingEventID: String? = nil
-    @State private var tempMemo: String = ""
+    @State private var tempMemo: [String: String] = [:]  // イベントごとのメモを管理する辞書
     @State private var isMemoSavedSuccess: Bool = false
+    @State private var isMemoEdited: [String: Bool] = [:]  // メモが編集されたかどうかを追跡するフラグ
     @StateObject private var keyboardResponder = KeyboardResponder()
     
     @State var isEditViewVisible: Bool = false
     @State var editingEvent: CalendarEvent? = nil
     
-    
     let plusImage: Image = Image(systemName: "plus")
-    
-    
     
     var body: some View {
         NavigationStack {
@@ -53,7 +51,7 @@ struct EventDetailModal: View {
                         }
                         
                         let eventsForDay = eventViewModel.events.filter { calendar.isDate($0.eventStartDate, inSameDayAs: date) }
-                            .sorted { $0.eventStartDate < $1.eventStartDate } // ここで開始時刻順にソート
+                            .sorted { $0.eventStartDate < $1.eventStartDate }
                         if eventsForDay.isEmpty {
                             Section {
                                 Text("None")
@@ -66,8 +64,6 @@ struct EventDetailModal: View {
                             }
                             .listRowBackground(Color.clear)
                         } else {
-                            
-                            
                             
                             ForEach(eventsForDay, id: \.id) { event in
                                 let isExpanded = expandedEventIDs.contains(event.id)
@@ -84,49 +80,21 @@ struct EventDetailModal: View {
                                             }
                                         )
                                     ){
-                                        
-                                        
                                         HStack() {
                                             memoImage.font(.footnote)
                                                 .padding(.top, 4)
                                                 .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                             
                                             ZStack(alignment: .leading) {
-                                                if (event.eventMemo ?? "").isEmpty && isMemoSavedSuccess {
+                                                // メモが空の場合は「No memo available」メッセージを表示
+                                                if let memo = event.eventMemo, !memo.isEmpty {
+                                                    Text(memo)
+                                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                                } else {
                                                     Text("No memo available.")
                                                         .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
                                                 }
-                                                
-                                                TextField("", text: Binding(
-                                                    get: { event.eventMemo ?? "" },
-                                                    set: { newValue in
-                                                        if newValue != event.eventMemo {
-                                                            isMemoSavedSuccess = false
-                                                        }
-                                                        tempMemo = newValue
-                                                        editingEventID = event.id
-                                                        withAnimation {
-                                                            expandedEventIDs = [event.id]
-                                                        }
-                                                    }
-                                                ), axis: .vertical)
-                                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                             }
-                                            
-                                            Button {
-                                                saveMemoToRealm(eventID: event.id, newMemo: tempMemo)
-                                                editingEventID = nil  // 編集終了
-                                                hideKeyboard()
-                                            } label: {
-                                                Image(systemName: isMemoSavedSuccess ? "checkmark.circle" : "circle")
-                                                    .foregroundStyle(isMemoSavedSuccess ? Color.accentColor : Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
-                                                    .font(.footnote)
-                                                    .fontWeight(.bold)
-                                            }
-                                            .buttonStyle(.plain)
-                                            .frame(alignment: .trailing)
-//                                            .opacity(isExpanded && keyboardResponder.isKeyboardVisible && editingEventID == event.id ? 1 : 0)
-                                            
                                         }
                                         .frame(minHeight: 40)
                                     } label: {
@@ -153,7 +121,6 @@ struct EventDetailModal: View {
                                             }
                                         }
                                         .onTapGesture {
-                                            // 開閉のトグル
                                             withAnimation {
                                                 if isExpanded {
                                                     _ = expandedEventIDs.remove(event.id)
@@ -312,24 +279,8 @@ struct EventDetailModal: View {
         }
         return holiday.name
     }
-    
-    func saveMemoToRealm(eventID: String, newMemo: String) {
-        do {
-            let realm = try Realm()
-            if let event = realm.object(ofType: CalendarEvent.self, forPrimaryKey: eventID) {
-                try realm.write {
-                    event.eventMemo = newMemo
-                }
-                isMemoSavedSuccess = true
-                print("Memo saved: \(newMemo)")  // ← 保存確認
-            } else {
-                print("Event not found in Realm")
-            }
-        } catch {
-            print("Failed to save memo: \(error.localizedDescription)")
-        }
-    }
 }
+
 
 extension View {
     func hideKeyboard() {

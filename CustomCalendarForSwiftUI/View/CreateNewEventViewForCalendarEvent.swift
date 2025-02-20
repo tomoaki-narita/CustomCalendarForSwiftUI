@@ -259,30 +259,24 @@ struct CreateNewEventViewForCalendarEvent: View {
             return
         }
 
-        let startDateStr = dateToString(eventStartDate)
-        let endDateStr = dateToString(eventEndDate)
+//        let startDateStr = dateToString(eventStartDate)
+//        let endDateStr = dateToString(eventEndDate)
         let colorData = encodeColorToData(selectedColor)
 
         // 重複チェック
         let duplicateEvent = realm.objects(CalendarEvent.self).first {
+            $0.id != (editingEvent?.id ?? "") && // 自身を除外
             $0.eventTitle == eventTitle &&
-            dateToString($0.eventStartDate) == startDateStr &&
-            dateToString($0.eventEndDate) == endDateStr &&
+            $0.eventStartDate == eventStartDate &&
+            $0.eventEndDate == eventEndDate &&
             $0.colorData == colorData &&
-            $0.id != (editingEvent?.id ?? "") // 自身を除外
+            $0.eventMemo == eventMemo &&
+            $0.allDay == allDayToggle // すべて一致する場合のみ重複とみなす
         }
 
-        if let duplicateEvent = duplicateEvent {
-            // 既存イベントとメモだけが異なる場合は更新を許可
-            if duplicateEvent.eventMemo != eventMemo {
-                try? realm.write {
-                    duplicateEvent.eventMemo = eventMemo
-                }
-                eventViewModel.fetchEvents()
-                dismiss()
-                return
-            }
 
+
+        if duplicateEvent != nil {
             activeAlert = .custom(String(localized: "This event has already been registered."))
             return
         }
@@ -295,7 +289,7 @@ struct CreateNewEventViewForCalendarEvent: View {
                 existingEvent.eventStartDate = eventStartDate
                 existingEvent.eventEndDate = eventEndDate
                 existingEvent.eventMemo = eventMemo
-                existingEvent.allDay = editingEvent?.allDay ?? allDayToggle
+                existingEvent.allDay = allDayToggle  // ここで明示的に更新
                 existingEvent.colorData = colorData
             } else {
                 // 新規イベントの作成
@@ -311,6 +305,7 @@ struct CreateNewEventViewForCalendarEvent: View {
                 realm.add(newEvent)
             }
         }
+
         eventViewModel.fetchEvents()
         dismiss()
     }
@@ -353,7 +348,7 @@ struct CreateNewEventViewForCalendarEvent: View {
     }
     
     private func currentThemeDatePickerColorScheme() -> Bool {
-        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGradient {
+        if themeManager.currentTheme == .dark || themeManager.currentTheme == .red || themeManager.currentTheme == .orange || themeManager.currentTheme == .green || themeManager.currentTheme == .blue || themeManager.currentTheme == .blueGrad {
             return true
         } else if themeManager.currentTheme == .system && colorScheme == .dark {
             return true

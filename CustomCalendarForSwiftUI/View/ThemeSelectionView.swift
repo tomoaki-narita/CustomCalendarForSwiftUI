@@ -10,7 +10,7 @@ import SwiftUI
 struct ThemeSelectionView: View {
     
     @EnvironmentObject var themeManager: AppThemeManager
-    let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 3)
+    let columns: [GridItem] = Array(repeating: .init(.flexible()), count: 4)
     let iconSize: CGFloat = 60
     
     var body: some View {
@@ -28,12 +28,11 @@ struct ThemeSelectionView: View {
                                         }
                                     }) {
                                         ZStack {
-                                            RoundedRectangle(cornerRadius: 15)
+                                            RoundedRectangle(cornerRadius: 20)
                                                 .fill(Color(UIColor.label))
                                                 .frame(width: iconSize * 1.15, height: iconSize * 1.15)
                                                 .shadow(radius: 5)
-                                            RoundedRectangle(cornerRadius: 10)
-//                                                .fill(theme.primaryColor)
+                                            RoundedRectangle(cornerRadius: 15)
                                                 .fill(
                                                     LinearGradient(gradient: Gradient(stops: [.init(color: theme.primaryColor, location: 0.0), .init(color: theme.gradientColor, location: 0.6)]), startPoint: .topLeading, endPoint: .bottomTrailing)
                                                 )
@@ -56,6 +55,7 @@ struct ThemeSelectionView: View {
                                         .font(.caption)
                                         .fontWeight(.bold)
                                         .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                        .frame(width: iconSize * 1.1 ,height: iconSize * 0.6)
                                 }
                             }
                         }
