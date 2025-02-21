@@ -24,6 +24,7 @@ struct CreateNewEventViewForCalendarEvent: View {
     @Environment(\.colorScheme) var colorScheme
     @FocusState private var focusdFieldForEventTitleTextField: Field?
     @FocusState private var focusdFieldForEventMemoTextField: Field?
+    @StateObject private var viewModel = HolidayViewModel()
     let starImage: Image = Image(systemName: "star.fill")
     let textImage: Image = Image(systemName: "t.square")
     let clockImage: Image = Image(systemName: "clock")
@@ -58,6 +59,7 @@ struct CreateNewEventViewForCalendarEvent: View {
             ZStack {
                 LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
+                    let holidayName = getHolidayName(for: selectedDate)
                     Section {
                         HStack(alignment: .center) {
                             textImage.font(.footnote)
@@ -164,6 +166,20 @@ struct CreateNewEventViewForCalendarEvent: View {
                                 .labelsHidden()
                         }
                         .frame(minHeight: 40)
+                    } header: {
+                        HStack {
+                            Text(formattedDate(selectedDate))
+                                .fontWeight(.semibold)
+                                .font(.headline)
+                            
+                            Spacer()
+                            
+                            Text(holidayName ?? "")
+                                .font(.footnote)
+                                .foregroundStyle(Color("HolidayColor"))
+                        }
+                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                        .padding(.top)
                     }
                     .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                     
@@ -308,7 +324,16 @@ struct CreateNewEventViewForCalendarEvent: View {
         dismiss()
     }
 
-
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        let currentLanguage = Locale.current.language.languageCode?.identifier
+        if currentLanguage == "ja" {
+            formatter.dateFormat = "yyyy MM-d E "
+        } else {
+            formatter.dateFormat = "E MMM dd, yyyy"
+        }
+        return formatter.string(from: date)
+    }
     
     func encodeColorToData(_ color: Color) -> Data? {
         let uiColor = UIColor(color)
@@ -353,6 +378,16 @@ struct CreateNewEventViewForCalendarEvent: View {
         } else {
             return false
         }
+    }
+    
+    private func getHolidayName(for date: Date) -> String? {
+        guard let holiday = viewModel.holidays.first(where: { holiday in
+            guard let holidayDate = holiday.dateFormatted else { return false }
+            return Calendar.current.isDate(holidayDate, inSameDayAs: date)
+        }) else {
+            return nil
+        }
+        return holiday.name
     }
 }
 

@@ -43,7 +43,7 @@ enum AppColorTheme: String, CaseIterable, Identifiable {
         case .blue: return Color("BlueSecondary")
         case .purple: return Color("PurpleSecondary")
         case .pink: return Color("PinkSecondary")
-        case .brown: return Color("BrownSecondary")
+        case .brown: return Color("GrayOpacity")
         case .gray: return Color("GraySecondary")
         case .darkXpurple: return Color("DarkXPurpleSecondary")
         case .system: return Color("SystemSecondary")

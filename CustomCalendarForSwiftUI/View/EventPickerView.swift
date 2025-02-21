@@ -54,13 +54,16 @@ struct EventPickerView: View {
                                                     .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                             }
                                             
-                                            HStack(spacing: 3) {
+                                            HStack(spacing: 0) {
                                                 if event.allDay {
                                                     Text("All day")
                                                         .font(.caption)
                                                         .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor).opacity(0.5))
                                                 } else {
                                                     Text(event.eventStartDate)
+                                                        .font(.caption2)
+                                                        .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                                    Text("-")
                                                         .font(.caption2)
                                                         .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
                                                     Text(event.eventEndDate)
@@ -71,10 +74,11 @@ struct EventPickerView: View {
                                         }
                                         .frame(width: buttonSize * 1.6, height: buttonSize, alignment: .leading)
                                         .padding(.vertical, 5)
+                                        Spacer()
                                     }
                                     .background(
-                                        decodeDataToColor(event.colorData)
-                                            .opacity(0.4)
+                                        Color(themeManager.currentTheme.tertiaryColor)
+                                            .opacity(0.3)
                                             .gradient,
                                         in: RoundedRectangle(cornerRadius: 10) // 角丸長方形に変更
                                     )

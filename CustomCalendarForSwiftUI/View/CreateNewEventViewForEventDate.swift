@@ -315,8 +315,6 @@ struct CreateNewEventViewForEventDate: View {
         
         dismiss()
     }
-
-
     
     func encodeColorToData(_ color: Color) -> Data? {
         let uiColor = UIColor(color)

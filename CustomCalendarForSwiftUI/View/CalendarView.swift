@@ -314,11 +314,11 @@ struct DayView: View {
                         // 現在の日付のテキスト色をaccentColorに変更
                             .frame(width: geometry.size.width, height: geometry.size.height) // Textを中央に配置
                             .multilineTextAlignment(.center)
-//                            .background(
-//                                Circle()
-//                                    .fill(isSelected(date) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
-//                                    .frame(maxWidth: geometry.size.width * 0.7)
-//                            )
+                            .background(
+                                Circle()
+                                    .fill(isSelected(date) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
+                                    .frame(maxWidth: geometry.size.width * 0.7)
+                            )
                             
                     }
                     
@@ -330,7 +330,7 @@ struct DayView: View {
                         ForEach(eventDataList, id: \.self) { eventData in
                             HStack(spacing: 0) {
                                 RoundedRectangle(cornerRadius: 10, style: .circular)
-                                    .frame(width: 3, height: 10)
+                                    .frame(width: 3, height: 8)
                                     .foregroundStyle(eventData.color)
                                     .padding(.leading, 3)
                                 
@@ -343,28 +343,28 @@ struct DayView: View {
                                     .lineLimit(1)
                             }
                             .background {
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(eventData.color.opacity(0.2))
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color(themeManager.currentTheme.tertiaryColor).opacity(0.2))
                                     .frame(height: 15)
                             }
                             .padding(.horizontal, 1)
                         }
                     }
-                    .frame(height: eventTitleHeight * 1.8, alignment: .top)
+                    .frame(height: eventTitleHeight * 1.5, alignment: .top)
                 } else {
                     Text("")
                         .font(.footnote)
                         .foregroundStyle(Color.clear)
                         .multilineTextAlignment(.center)
-                        .frame(height: eventTitleHeight * 1.8)
+                        .frame(height: eventTitleHeight * 1.5)
                 }
             }
         }
         .frame(height: cellHeight)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(isSelected(date ?? Date()) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
-        )
+//        .background(
+//            RoundedRectangle(cornerRadius: 8)
+//                .fill(isSelected(date ?? Date()) ? Color(themeManager.currentTheme.tertiaryColor).opacity(0.25) : Color.clear)  // 現在の日付の背景はなし
+//        )
         .padding(1)
         .onLongPressGesture {
             if let date = date {

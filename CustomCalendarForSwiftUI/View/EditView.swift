@@ -24,27 +24,27 @@ struct EditView: View {
             ZStack {
                 LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 List {
-                    Section {
-                        HStack {
-                            Spacer()
-                            Button {
-                                isEditViewVisible = true
-                                editingEvent = nil // 新規作成モード
-                            } label: {
-                                Text("\(plusImage) New event")
-                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
-                            }
-                            
-                            .sheet(isPresented: $isEditViewVisible) {
-                                CreateNewEventViewForEventDate(
-                                    editingEvent: $editingEvent,
-                                    selectedColor: .primary
-                                )
-                            }
-                            Spacer()
-                        }
-                    }
-                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
+//                    Section {
+//                        HStack {
+//                            Spacer()
+//                            Button {
+//                                isEditViewVisible = true
+//                                editingEvent = nil // 新規作成モード
+//                            } label: {
+//                                Text("\(plusImage) New event")
+//                                    .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+//                            }
+//                            .sheet(isPresented: $isEditViewVisible) {
+//                                CreateNewEventViewForEventDate(
+//                                    editingEvent: $editingEvent,
+//                                    selectedColor: .primary
+//                                )
+//                            }
+//                            
+//                            Spacer()
+//                        }
+//                    }
+//                    .listRowBackground(Color(themeManager.currentTheme.secondaryColor))
                     
                     Section(isExpanded: $eventListIsExpanded) {
                         ForEach(events, id: \.id) { event in
@@ -131,7 +131,32 @@ struct EditView: View {
                 .listStyle(.sidebar)
                 .headerProminence(.increased)
                 .navigationBarBackButtonTextHidden()
-                
+                .safeAreaInset(edge: .top) {
+                    HStack {
+                        Spacer()
+                        Button {
+                            isEditViewVisible = true
+                            editingEvent = nil
+                        } label: {
+                            Text("\(plusImage)")
+                                .foregroundStyle(Color(themeManager.currentTheme.tertiaryColor))
+                                .padding()
+                                .background(Color(themeManager.currentTheme.secondaryColor))
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                        }
+                        .sheet(isPresented: $isEditViewVisible) {
+                            CreateNewEventViewForEventDate(
+                                editingEvent: $editingEvent,
+                                selectedColor: .primary
+                            )
+                        }
+                        Spacer()
+                    }
+//                    .padding(.bottom, 10)
+                    .padding(.top, 20)
+//                    .padding(.trailing, 30)
+                }
             }
         }
         

@@ -45,7 +45,7 @@ struct EventDetailModal: View {
                                 Spacer()
                                 Text(holidayName ?? "")
                                     .font(.footnote)
-                                    .foregroundStyle(.holiday)
+                                    .foregroundStyle(Color("HolidayColor"))
                             }
                             .listRowBackground(Color.clear)
                         }
