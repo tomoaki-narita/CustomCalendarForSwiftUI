@@ -347,7 +347,7 @@ struct DayView: View {
                                     .fill(Color(themeManager.currentTheme.tertiaryColor).opacity(0.2))
                                     .frame(height: 15)
                             }
-                            .padding(.horizontal, 1)
+//                            .padding(.horizontal, 1)
                         }
                     }
                     .frame(height: eventTitleHeight * 1.5, alignment: .top)
@@ -374,7 +374,9 @@ struct DayView: View {
     }
     
     private func getDateColor(for date: Date) -> Color {
-        if isHoliday(date) { // 祝日なら赤色
+        if isHoliday(date) && isToday(date) { // 祝日かつ今日の場合
+            return .accentColor
+        } else if isHoliday(date) { // 祝日なら赤色
             return Color("HolidayColor")
         } else if isToday(date) { // 今日
             return .accentColor
@@ -384,6 +386,7 @@ struct DayView: View {
             return Color(themeManager.currentTheme.tertiaryColor) // デフォルト色
         }
     }
+
     
     // 該当の日付が祝日かどうかを判定
     private func isHoliday(_ date: Date) -> Bool {

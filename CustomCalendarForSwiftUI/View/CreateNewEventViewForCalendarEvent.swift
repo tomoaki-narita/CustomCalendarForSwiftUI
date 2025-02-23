@@ -328,7 +328,7 @@ struct CreateNewEventViewForCalendarEvent: View {
         let formatter = DateFormatter()
         let currentLanguage = Locale.current.language.languageCode?.identifier
         if currentLanguage == "ja" {
-            formatter.dateFormat = "yyyy MM-d E "
+            formatter.dateFormat = "yyyy-MM-dd E "
         } else {
             formatter.dateFormat = "E MMM dd, yyyy"
         }

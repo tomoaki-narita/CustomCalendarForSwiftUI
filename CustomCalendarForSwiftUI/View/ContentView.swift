@@ -53,7 +53,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-//                Color(themeManager.currentTheme.primaryColor).ignoresSafeArea()
                 LinearGradient(gradient: Gradient(stops: [.init(color: themeManager.currentTheme.primaryColor, location: 0.25), .init(color: themeManager.currentTheme.gradientColor, location: 0.7)]), startPoint: .topLeading, endPoint: .bottomTrailing).ignoresSafeArea()
                 VStack {
                     CalendarView(
@@ -65,9 +64,9 @@ struct ContentView: View {
                         events: eventViewModel.events,
                         onLongTap: { date in
                             tappedDate = date  // ロングタップされた日付を保存
-                        }, viewModel: viewModel
+                        },
+                        viewModel: viewModel
                     )
-//                    .background(Color(themeManager.currentTheme.secondaryColor))
                     .clipShape(RoundedRectangle(cornerRadius: 40))
                     .blur(radius: showEventPickerView ? 2.5 : 0)
                     .allowsHitTesting(!showEventPickerView)
@@ -130,7 +129,6 @@ struct ContentView: View {
                     .allowsHitTesting(!showEventPickerView) //opacityが0になるとタップできなくなるため不要だが一応残す
                     .opacity(showEventPickerView ? 0 : 1)
                 }
-//                .background(Color(.systemGray4).opacity(0.3))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
                 .padding(.horizontal)
                 .sheet(item: $tappedDate) { date in
@@ -413,12 +411,6 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
         return viewControllers.count > 1
     }
 }
-
-
-
-
-
-
 
 
 struct NavigationBarBackButtonTextHidden: ViewModifier {

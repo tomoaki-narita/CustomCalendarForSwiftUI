@@ -75,18 +75,6 @@ struct CopyingIosCalendarEvents: View {
                     }
                     .listRowBackground(Color.clear)
                     
-//                    Section {
-//                        Text(getDefaultCalendarTitle())
-//                            .foregroundColor(getDefaultCalendarTitle() == getDefaultCalendarTitle() ? .primary : .black.opacity(0.3))
-//                            .font(.body)
-//                            .onTapGesture {
-//                                showDefaultCalendarAlert.toggle()
-//                            }
-//                    } header: {
-//                        Text("Default calendar")
-//                    }
-//                    .listRowBackground(Color(.systemGray4).opacity(0.3))
-                    
                     Section {
                         HStack(spacing: 0) {
                             Spacer()
@@ -178,13 +166,7 @@ struct CopyingIosCalendarEvents: View {
         }, message: {
             Text("Export to iOS calendar is completed.")
         })
-//        .alert("Change the default calendar", isPresented: $showDefaultCalendarAlert, actions: {
-//            Button("OK") {}
-//        }, message: {
-//            VStack {
-//                Text("\"Settings app\" → \"Apps\" → \"Calendar\" → \"Default Calendar\"")
-//            }
-//        })
+
     }
     
     func fetchAndPrintEventsForSelectedMonth() {
@@ -212,34 +194,42 @@ struct CopyingIosCalendarEvents: View {
         }
         var success = false
         for event in eventsToCopy {
-            let ekEvent = EKEvent(eventStore: eventStore)
-            ekEvent.title = event.eventTitle
-            ekEvent.startDate = event.eventStartDate
-            ekEvent.endDate = event.eventEndDate
-            ekEvent.isAllDay = event.allDay
-            ekEvent.calendar = defaultCalendar
-            do {
-                try eventStore.save(ekEvent, span: .thisEvent)
-                print("Event saved to iOS calendar: \(event.eventTitle)")
-                success = true
-            } catch {
-                print("Failed to save event: \(error.localizedDescription)")
+            // 同じタイトルと開始時間を基に既存イベントを検索
+            let predicate = eventStore.predicateForEvents(withStart: event.eventStartDate, end: event.eventEndDate, calendars: [defaultCalendar])
+            let existingEvents = eventStore.events(matching: predicate)
+
+            // 同じタイトルのイベントが見つからない場合のみ登録
+            let eventExists = existingEvents.contains { existingEvent in
+                return existingEvent.title == event.eventTitle
+            }
+
+            if eventExists {
+                print("Event already exists: \(event.eventTitle)")
+            } else {
+                let ekEvent = EKEvent(eventStore: eventStore)
+                ekEvent.title = event.eventTitle
+                ekEvent.startDate = event.eventStartDate
+                ekEvent.endDate = event.eventEndDate
+                ekEvent.isAllDay = event.allDay
+                ekEvent.calendar = defaultCalendar
+                do {
+                    try eventStore.save(ekEvent, span: .thisEvent)
+                    print("Event saved to iOS calendar: \(event.eventTitle)")
+                    success = true
+                } catch {
+                    print("Failed to save event: \(error.localizedDescription)")
+                }
             }
         }
+
         if success {
             DispatchQueue.main.async {
                 isShowExportSuccessful.toggle()
             }
         }
     }
+
     
-//    func getDefaultCalendarTitle() -> String {
-//        if let defaultCalendar = eventStore.defaultCalendarForNewEvents?.title {
-//            return defaultCalendar
-//        } else {
-//            return "No default calendar found."
-//        }
-//    }
 }
 
 #Preview {

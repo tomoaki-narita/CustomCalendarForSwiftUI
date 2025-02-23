@@ -277,6 +277,16 @@
         }
       }
     },
+    "Edit template" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit template"
+          }
+        }
+      }
+    },
     "End" : {
       "localizations" : {
         "ja" : {
@@ -453,6 +463,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New event"
+          }
+        }
+      }
+    },
+    "New template" : {
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New template"
           }
         }
       }

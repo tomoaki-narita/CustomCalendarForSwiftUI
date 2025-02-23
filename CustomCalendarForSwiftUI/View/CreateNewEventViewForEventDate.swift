@@ -193,9 +193,10 @@ struct CreateNewEventViewForEventDate: View {
                 .scrollDismissesKeyboard(.interactively)
                 .listStyle(.sidebar)
                 .scrollContentBackground(.hidden)
+                .headerProminence(.increased)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
-                        Text(editingEvent == nil ? "New event" : "Edit event")
+                        Text(editingEvent == nil ? "New template" : "Edit template")
                             .font(.headline)
                             .fontWeight(.heavy)
                             .foregroundColor(themeManager.currentTheme.tertiaryColor)
